@@ -10,30 +10,40 @@ class GpioController(object):
         self._base_path = base_path
 
     def export(self, port_id):
-        with open(os.path.join(self._base_path, 'export'), 'w') as fp:
-            fp.write(port_id)
         port_path = os.path.join(self._base_path, 'gpio{}'.format(port_id))
-        return GpioPort(port_path=port_path)
+        port = GpioPort(port_path=port_path)
+        if not os.path.exists(port_path):
+            with open(os.path.join(self._base_path, 'export'), 'w') as fp:
+                fp.write('{}'.format(port_id))
+            port.set_direction('out')
+        return port
 
 
 class GpioPort(object):
     def __init__(self, port_path):
         self._port_path = port_path
-
-        self._set_direction('out')
+	self._state = False
 
     def turn_on(self):
         print("activating port {}".format(self._port_path))
         self._set_value('1')
+	self._state = True
 
     def turn_off(self):
         print("deactivating port {}".format(self._port_path))
         self._set_value('0')
+	self._state = False
+
+    def toggle(self):
+        if self._state:
+            self.turn_off()
+        else:
+            self.turn_on()
 
     def _set_value(self, value):
         self._write('value', value)
 
-    def _set_direction(self, value):
+    def set_direction(self, value):
         self._write('direction', value)
 
     def _write(self, variable_name, value):
