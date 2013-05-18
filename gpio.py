@@ -1,3 +1,4 @@
+# vim:set ts=4 sw=4 et:
 from __future__ import print_function
 
 import os.path
@@ -9,30 +10,34 @@ class GpioController(object):
     def __init__(self, base_path=GPIO_BASE_PATH):
         self._base_path = base_path
 
-    def export(self, port_id):
+    def get_outgoing_port(self, port_id):
         port_path = os.path.join(self._base_path, 'gpio{}'.format(port_id))
-        port = GpioPort(port_path=port_path)
-        if not os.path.exists(port_path):
-            with open(os.path.join(self._base_path, 'export'), 'w') as fp:
-                fp.write('{}'.format(port_id))
-            port.set_direction('out')
-        return port
+        return GpioPort(port_path=port_path)
 
 
-class GpioPort(object):
+class GpioOutPort(object):
     def __init__(self, port_path):
         self._port_path = port_path
-	self._state = False
+        self._state = False
+
+    @property
+    def is_exported(self):
+        return os.path.exists(port_path)
+
+    def export(self, port_id):
+        with open(os.path.join(self._base_path, 'export'), 'w') as fp:
+            fp.write('{}'.format(port_id))
+        port.set_direction('out')
 
     def turn_on(self):
         print("activating port {}".format(self._port_path))
         self._set_value('1')
-	self._state = True
+        self._state = True
 
     def turn_off(self):
         print("deactivating port {}".format(self._port_path))
         self._set_value('0')
-	self._state = False
+        self._state = False
 
     def toggle(self):
         if self._state:
