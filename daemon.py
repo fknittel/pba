@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import gpio
 import weakref
+import time
 from twisted.internet import task
 from twisted.internet import reactor
 
@@ -20,7 +21,7 @@ class NullInterceptor(object):
 
 class AbstractBaseInterceptor(object):
     def __init__(self):
-        self.child_interceptor = NullInterceptor()
+        self.chained_interceptor = NullInterceptor()
 
 
 class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
@@ -33,11 +34,11 @@ class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
         if self._active_sprinklers == self._max_active_sprinklers:
             raise SprinklerException(
                     'maximum number of active sprinklers exceeded')
-        self.child_interceptor.turn_on(sprinkler)
+        self.chained_interceptor.turn_on(sprinkler)
         self._active_sprinklers += 1
 
     def turn_off(self, sprinkler):
-        self.child_interceptor.turn_off(sprinkler)
+        self.chained_interceptor.turn_off(sprinkler)
         self._active_sprinklers -= 1
 
 
@@ -49,28 +50,50 @@ class StateVerificationInterceptor(AbstractBaseInterceptor):
     def turn_on(self, sprinkler):
         if self._state.get(sprinkler, False):
             raise SprinklerException('sprinkler {} already turned on'.format(sprinkler))
-        self.child_interceptor.turn_on(sprinkler)
+        self.chained_interceptor.turn_on(sprinkler)
         self._state[sprinkler] = True
 
     def turn_off(self, sprinkler):
         if not self._state.get(sprinkler, False):
             raise SprinklerException('sprinkler {} already turned off'.format(sprinkler))
-        self.child_interceptor.turn_off(sprinkler)
+        self.chained_interceptor.turn_off(sprinkler)
         self._state[sprinkler] = False
 
 
-class MaximumRuntimeTracker(object):
-    def __init__(self, sprinkler_id, sprinkler_ctrl, max_runtime_minutes):
+class MaximumAverageRuntimeTracker(object):
+    TWENTY_FOUR_HOURS_IN_SECS = 24 * 60 * 60
+
+    def __init__(self, sprinkler_id, sprinkler_ctrl, max_runtimes):
         self._sprinkler_id = sprinkler_id
         self._sprinkler_ctrl = sprinkler_ctrl
-        self._max_runtime_minutes = max_runtime_minutes
+        self._max_runtimes = max_runtimes
         self._timer = None
+        self._historic_runtimes = []
+        self._start_time = None
 
     def start(self):
         """Track sprinkler start event."""
         self._cancel()
-        self._timer = task.deferLater(reactor, self._max_runtime_minutes * 60,
+        max_remaining_runtime = None
+        for duration, max_runtime in self._max_runtimes:
+            last_runtime = self._calculate_runtime_for(duration)
+            max_remaining_runtime_for_duration = max_runtime - last_runtime
+            if max_remaining_runtime is None:
+                max_remaining_runtime = max_remaining_runtime_for_duration
+            max_remaining_runtime = min(max_remaining_runtime_for_duration, max_remaining_runtime)
+
+        if max_remaining_runtime < 0:
+            raise SprinklerException('sprinkler {} was already running for too long'.format(self._sprinkler_id))
+
+        print('sprinkler {} will be stopped in {} secs'.format(self._sprinkler_id, max_remaining_runtime))
+        self._timer = task.deferLater(reactor, max_remaining_runtime,
                 self._on_timeout)
+        self._start_time = time.time()
+
+    def _max_remaining_runtime(self, since):
+        last_runtime = self._calculate_duration_for(since)
+        max_remaining_runtime = self._max_runtime_secs - last_runtime
+        return max_remaining_runtime
 
     def cancel(self):
         """Cancel the sprinkler start event."""
@@ -79,6 +102,28 @@ class MaximumRuntimeTracker(object):
     def stop(self):
         """Track sprinkler stop event."""
         self._cancel()
+        self._record_runtime()
+
+    def _record_runtime(self):
+        end_time = time.time()
+        runtime = end_time - self._start_time
+        self._historic_runtimes.append((end_time, runtime))
+        self._start_time = None
+        self._clean_history()
+
+    def _calculate_runtime_for(self, duration):
+        last_relevant_timestamp = time.time() - duration
+        return sum([runtime \
+                for end_time, runtime \
+                in self._historic_runtimes \
+                if end_time >= last_relevant_timestamp])
+
+    def _clean_history(self):
+        last_relevant_timestamp = time.time() - self.TWENTY_FOUR_HOURS_IN_SECS
+        self._historic_runtimes = [(end_time, runtime) \
+                for end_time, runtime \
+                in self._historic_runtimes \
+                if end_time >= last_relevant_timestamp]
 
     def _cancel(self):
         if self._timer is not None:
@@ -89,28 +134,28 @@ class MaximumRuntimeTracker(object):
         self._sprinkler_ctrl.turn_off(self._sprinkler_id)
 
 
-class MaximumRuntimeInterceptor(AbstractBaseInterceptor):
-    def __init__(self, sprinkler_ctrl, max_runtime_minutes=10):
+class MaximumAverageRuntimeInterceptor(AbstractBaseInterceptor):
+    def __init__(self, sprinkler_ctrl, max_runtimes):
         AbstractBaseInterceptor.__init__(self)
         self._sprinkler_ctrl = sprinkler_ctrl
-        self._max_runtime_minutes = max_runtime_minutes
+        self._max_runtimes = max_runtimes
         self._sprinkler_tracker = {}
 
     def turn_on(self, sprinkler):
         if sprinkler not in self._sprinkler_tracker:
             self._sprinkler_tracker[sprinkler] = \
-                    MaximumRuntimeTracker(sprinkler.sprinkler_id,
+                    MaximumAverageRuntimeTracker(sprinkler.sprinkler_id,
                             self._sprinkler_ctrl,
-                            max_runtime_minutes=self._max_runtime_minutes)
+                            max_runtimes=self._max_runtimes)
         self._sprinkler_tracker[sprinkler].start() 
         try:
-            self.child_interceptor.turn_on(sprinkler)
+            self.chained_interceptor.turn_on(sprinkler)
         except:
             self._sprinkler_tracker[sprinkler].cancel() 
             raise
 
     def turn_off(self, sprinkler):
-        self.child_interceptor.turn_off(sprinkler)
+        self.chained_interceptor.turn_off(sprinkler)
         self._sprinkler_tracker[sprinkler].stop() 
 
 
@@ -123,7 +168,7 @@ class SprinklerController(object):
         self._sprinkler_to_port[sprinkler_id] = port
 
     def add_interceptor(self, interceptor):
-        interceptor.child_interceptor = self._interceptor
+        interceptor.chained_interceptor = self._interceptor
         self._interceptor = interceptor
 
     def turn_on(self, sprinkler_id):
@@ -181,9 +226,14 @@ def load_test_sprinklers(gpio_ctrl, sprinkler_ctrl):
 
 
 def load_sprinkler_interceptors(sprinkler_ctrl):
-    sprinkler_ctrl.add_interceptor(MaximumRuntimeInterceptor(weakref.proxy(sprinkler_ctrl)))
+    sprinkler_ctrl.add_interceptor(MaximumAverageRuntimeInterceptor(weakref.proxy(sprinkler_ctrl), max_runtimes=[
+                (     60 * 60,     10 * 60),
+                (12 * 60 * 60,     30 * 60),
+                (24 * 60 * 60, 1 * 60 * 60),
+            ]))
     sprinkler_ctrl.add_interceptor(GlobalMaximumOfActiveSprinklersInterceptor())
     sprinkler_ctrl.add_interceptor(StateVerificationInterceptor())
+
 
 def main():
     gpio_ctrl = gpio.GpioController()
