@@ -3,8 +3,10 @@ from __future__ import print_function
 import gpio
 import weakref
 import time
+import copy
 from twisted.internet import task
 from twisted.internet import reactor
+from twisted.internet import defer
 
 
 class SprinklerException(Exception):
@@ -18,10 +20,16 @@ class NullInterceptor(object):
     def turn_off(self, sprinkler):
         sprinkler.turn_off()
 
+    def check_delay_activation(self):
+        return False
+
 
 class AbstractBaseInterceptor(object):
     def __init__(self):
         self.chained_interceptor = NullInterceptor()
+
+    def check_delay_activation(self):
+        return self.chained_interceptor.check_delay_activation()
 
 
 class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
@@ -31,7 +39,7 @@ class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
         self._active_sprinklers = 0
 
     def turn_on(self, sprinkler):
-        if self._active_sprinklers == self._max_active_sprinklers:
+        if self._max_active_sprinklers_reached():
             raise SprinklerException(
                     'maximum number of active sprinklers exceeded')
         self.chained_interceptor.turn_on(sprinkler)
@@ -40,6 +48,14 @@ class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
     def turn_off(self, sprinkler):
         self.chained_interceptor.turn_off(sprinkler)
         self._active_sprinklers -= 1
+
+    def _max_active_sprinklers_reached(self):
+        return self._active_sprinklers == self._max_active_sprinklers
+
+    def check_delay_activation(self):
+        if self._max_active_sprinklers_reached():
+            return True
+        return AbstractBaseInterceptor.check_delay_activation(self)
 
 
 class StateVerificationInterceptor(AbstractBaseInterceptor):
@@ -60,10 +76,20 @@ class StateVerificationInterceptor(AbstractBaseInterceptor):
         self._state[sprinkler] = False
 
 
+def ignore_cancelled_error(failure):
+    failure.trap(defer.CancelledError)
+
+def deferLater(clock, delay, callback, *args, **kwargs):
+    timer = task.deferLater(clock, delay, callback, *args, **kwargs)
+    timer.addErrback(ignore_cancelled_error)
+    return timer
+
+
 class MaximumAverageRuntimeTracker(object):
     TWENTY_FOUR_HOURS_IN_SECS = 24 * 60 * 60
 
-    def __init__(self, sprinkler_id, sprinkler_ctrl, max_runtimes):
+    def __init__(self, clock, sprinkler_id, sprinkler_ctrl, max_runtimes):
+        self._clock = clock
         self._sprinkler_id = sprinkler_id
         self._sprinkler_ctrl = sprinkler_ctrl
         self._max_runtimes = max_runtimes
@@ -86,7 +112,7 @@ class MaximumAverageRuntimeTracker(object):
             raise SprinklerException('sprinkler {} was already running for too long'.format(self._sprinkler_id))
 
         print('sprinkler {} will be stopped in {} secs'.format(self._sprinkler_id, max_remaining_runtime))
-        self._timer = task.deferLater(reactor, max_remaining_runtime,
+        self._timer = deferLater(self._clock, max_remaining_runtime,
                 self._on_timeout)
         self._start_time = time.time()
 
@@ -107,6 +133,7 @@ class MaximumAverageRuntimeTracker(object):
     def _record_runtime(self):
         end_time = time.time()
         runtime = end_time - self._start_time
+        print("Recording end runtime: {0}, {1}".format(end_time, runtime))
         self._historic_runtimes.append((end_time, runtime))
         self._start_time = None
         self._clean_history()
@@ -135,8 +162,9 @@ class MaximumAverageRuntimeTracker(object):
 
 
 class MaximumAverageRuntimeInterceptor(AbstractBaseInterceptor):
-    def __init__(self, sprinkler_ctrl, max_runtimes):
+    def __init__(self, clock, sprinkler_ctrl, max_runtimes):
         AbstractBaseInterceptor.__init__(self)
+        self._clock = clock
         self._sprinkler_ctrl = sprinkler_ctrl
         self._max_runtimes = max_runtimes
         self._sprinkler_tracker = {}
@@ -144,7 +172,8 @@ class MaximumAverageRuntimeInterceptor(AbstractBaseInterceptor):
     def turn_on(self, sprinkler):
         if sprinkler not in self._sprinkler_tracker:
             self._sprinkler_tracker[sprinkler] = \
-                    MaximumAverageRuntimeTracker(sprinkler.sprinkler_id,
+                    MaximumAverageRuntimeTracker(self._clock,
+                            sprinkler.sprinkler_id,
                             self._sprinkler_ctrl,
                             max_runtimes=self._max_runtimes)
         self._sprinkler_tracker[sprinkler].start() 
@@ -176,6 +205,12 @@ class SprinklerController(object):
 
     def turn_off(self, sprinkler_id):
         return self._interceptor.turn_off(self._sprinkler_to_port[sprinkler_id])
+
+    def check_delay_activation(self):
+        return self._interceptor.check_delay_activation()
+
+    def is_valid(self, sprinkler_id):
+        return sprinkler_id in self._sprinkler_to_port
 
 
 def load_sprinklers(gpio_ctrl, sprinkler_ctrl):
@@ -226,7 +261,10 @@ def load_test_sprinklers(gpio_ctrl, sprinkler_ctrl):
 
 
 def load_sprinkler_interceptors(sprinkler_ctrl):
-    sprinkler_ctrl.add_interceptor(MaximumAverageRuntimeInterceptor(weakref.proxy(sprinkler_ctrl), max_runtimes=[
+    sprinkler_ctrl.add_interceptor(MaximumAverageRuntimeInterceptor(
+            reactor,
+            weakref.proxy(sprinkler_ctrl),
+            max_runtimes=[
                 (     60 * 60,     10 * 60),
                 (12 * 60 * 60,     30 * 60),
                 (24 * 60 * 60, 1 * 60 * 60),
@@ -235,11 +273,113 @@ def load_sprinkler_interceptors(sprinkler_ctrl):
     sprinkler_ctrl.add_interceptor(StateVerificationInterceptor())
 
 
+class Queue(object):
+    def __init__(self):
+        self._queue = []
+
+    def push(self, item):
+        self._queue.append(item)
+
+    def is_empty(self):
+        return len(self._queue) == 0
+
+    def pop(self):
+        return self._queue.pop(0)
+
+    def remove(self, search_func):
+        for idx, item in enumerate(self._queue):
+            if search_func(item):
+                del self._queue[idx]
+                return item
+
+    def list_all(self):
+        return copy.deepcopy(self._queue)
+
+
+class SprinklerJob(object):
+    def __init__(self, job_id, sprinkler_id, duration):
+        self.job_id = job_id
+        self.sprinkler_id = sprinkler_id
+        self.duration = duration
+
+        self.start_time = None
+        self.timer = None
+
+class SprinklerJobQueue(object):
+    def __init__(self, clock, sprinkler_ctrl):
+        self._clock = clock
+        self._sprinkler_ctrl = sprinkler_ctrl
+        self._last_job_id = 0
+        self._waiting_jobs = Queue()
+        self._active_jobs = Queue()
+
+    def add(self, sprinkler_id, duration):
+        if not self._sprinkler_ctrl.is_valid(sprinkler_id):
+            raise RuntimeError('Invalid sprinkler id {}'.format(sprinkler_id))
+
+        job_id = self._get_next_job_id()
+        job = SprinklerJob(job_id, sprinkler_id, duration)
+        self._waiting_jobs.push(job)
+        self._attempt_next_job()
+        return job_id
+
+    def _attempt_next_job(self):
+        while not self._waiting_jobs.is_empty() and \
+                not self._sprinkler_ctrl.check_delay_activation():
+            job = self._waiting_jobs.pop()
+            try:
+                self._sprinkler_ctrl.turn_on(job.sprinkler_id)
+            except SprinklerException, e:
+                print('activating sprinkler failed: {}'.format(e))
+                self._attempt_next_job()
+                continue
+
+            job.start_time = time.time()
+            job.timer = deferLater(self._clock, job.duration,
+                    self._on_end_of_duration, job)
+            self._active_jobs.push(job)
+
+    def remove_active_job(self, job_id):
+        job = self._remove_job(self._active_jobs, job_id)
+        if job is None:
+            raise ValueError('job with id {} not found'.format(job_id))
+        job.timer.cancel()
+        self._turn_off(job)
+
+    def _on_end_of_duration(self, job):
+        self._remove_job(self._active_jobs, job.job_id)
+        self._turn_off(job)
+
+    def _turn_off(self, job):
+        try:
+            self._sprinkler_ctrl.turn_off(job.sprinkler_id)
+        except SprinklerException, e:
+            print('deactivating sprinkler failed: {}'.format(e))
+        self._attempt_next_job()
+
+    def remove_waiting_job(self, job_id):
+        self._remove_job(self._waiting_jobs, job_id)
+
+    def _remove_job(self, queue, job_id):
+        return queue.remove(lambda x: x.job_id == job_id)
+
+    def _get_next_job_id(self):
+        self._last_job_id += 1
+        return self._last_job_id
+
+    def list_waiting_jobs(self):
+        return self._waiting_jobs.list_all()
+
+    def list_active_jobs(self):
+        return self._active_jobs.list_all()
+
+
 def main():
     gpio_ctrl = gpio.GpioController()
     sprinkler_ctrl = SprinklerController()
+    sprinkler_job_queue = SprinklerJobQueue(reactor, sprinkler_ctrl)
 
     load_test_sprinklers(gpio_ctrl, sprinkler_ctrl)
     load_sprinkler_interceptors(sprinkler_ctrl)
 
-    return sprinkler_ctrl
+    return sprinkler_job_queue
