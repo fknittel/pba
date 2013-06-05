@@ -305,13 +305,37 @@ class SprinklerJob(object):
         self.start_time = None
         self.timer = None
 
+
+class JobQueue(object):
+    def __init__(self):
+        self._queue = Queue()
+
+    def push(self, job):
+        self._queue.push(job)
+
+    def is_empty(self):
+        return self._queue.is_empty()
+
+    def pop(self):
+        return self._queue.pop()
+
+    def remove(self, job_id):
+        job = self._queue.remove(lambda x: x.job_id == job_id)
+        if job is None:
+            raise ValueError('job with id {} not found'.format(job_id))
+        return job
+
+    def list_all(self):
+        return self._queue.list_all()
+
+
 class SprinklerJobQueue(object):
     def __init__(self, clock, sprinkler_ctrl):
         self._clock = clock
         self._sprinkler_ctrl = sprinkler_ctrl
         self._last_job_id = 0
-        self._waiting_jobs = Queue()
-        self._active_jobs = Queue()
+        self._waiting_jobs = JobQueue()
+        self._active_jobs = JobQueue()
 
     def add(self, sprinkler_id, duration):
         if not self._sprinkler_ctrl.is_valid(sprinkler_id):
@@ -322,6 +346,16 @@ class SprinklerJobQueue(object):
         self._waiting_jobs.push(job)
         self._attempt_next_job()
         return job_id
+
+    def _get_next_job_id(self):
+        self._last_job_id += 1
+        return self._last_job_id
+
+    def remove_waiting_job(self, job_id):
+        self._waiting_jobs.remove(job_id)
+
+    def list_waiting_jobs(self):
+        return self._waiting_jobs.list_all()
 
     def _attempt_next_job(self):
         while not self._waiting_jobs.is_empty() and \
@@ -340,14 +374,12 @@ class SprinklerJobQueue(object):
             self._active_jobs.push(job)
 
     def remove_active_job(self, job_id):
-        job = self._remove_job(self._active_jobs, job_id)
-        if job is None:
-            raise ValueError('job with id {} not found'.format(job_id))
+        job = self._active_jobs.remove(job_id)
         job.timer.cancel()
         self._turn_off(job)
 
     def _on_end_of_duration(self, job):
-        self._remove_job(self._active_jobs, job.job_id)
+        self._active_jobs.remove(job.job_id)
         self._turn_off(job)
 
     def _turn_off(self, job):
@@ -356,19 +388,6 @@ class SprinklerJobQueue(object):
         except SprinklerException, e:
             print('deactivating sprinkler failed: {}'.format(e))
         self._attempt_next_job()
-
-    def remove_waiting_job(self, job_id):
-        self._remove_job(self._waiting_jobs, job_id)
-
-    def _remove_job(self, queue, job_id):
-        return queue.remove(lambda x: x.job_id == job_id)
-
-    def _get_next_job_id(self):
-        self._last_job_id += 1
-        return self._last_job_id
-
-    def list_waiting_jobs(self):
-        return self._waiting_jobs.list_all()
 
     def list_active_jobs(self):
         return self._active_jobs.list_all()
