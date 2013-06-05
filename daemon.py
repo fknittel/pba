@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import gpio
 import weakref
@@ -363,7 +363,7 @@ class SprinklerJobQueue(object):
             job = self._waiting_jobs.pop()
             try:
                 self._sprinkler_ctrl.turn_on(job.sprinkler_id)
-            except SprinklerException, e:
+            except SprinklerException as e:
                 print('activating sprinkler failed: {}'.format(e))
                 self._attempt_next_job()
                 continue
@@ -385,7 +385,7 @@ class SprinklerJobQueue(object):
     def _turn_off(self, job):
         try:
             self._sprinkler_ctrl.turn_off(job.sprinkler_id)
-        except SprinklerException, e:
+        except SprinklerException as e:
             print('deactivating sprinkler failed: {}'.format(e))
         self._attempt_next_job()
 
