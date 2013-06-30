@@ -1,8 +1,9 @@
 #!/usr/bin/python
-
-from time import sleep
-from gpio import *
-import sys
+# vim:set ts=4 sw=4 et:
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
+from gpio import GpioController
+import time
 
 ctrl = GpioController()
 
@@ -20,25 +21,25 @@ p_court6 = ctrl.export(GPIO2_BASE + 22)
 p_courts = [p_court1, p_court2, p_court3, p_court4, p_court5, p_court6]
 
 for court in p_courts:
-  court.turn_off()
+    court.turn_off()
 pcounter = 0
 while True:
-  if pcounter < 6:
-    p_court1.toggle()
-  elif pcounter < 12:
-    p_court2.toggle()
-  elif pcounter < 18:
-    p_court3.toggle()
-  elif pcounter < 24:
-    p_court4.toggle()
-  elif pcounter < 30:
-    p_court5.toggle()
-  elif pcounter < 36:
-    p_court6.toggle()
-  elif pcounter < 42:
-    for court in p_courts:
-      court.toggle()
-  pcounter += 1
-  if pcounter == 42:
-    pcounter = 0
-  sleep(0.5)
+    if pcounter < 6:
+        p_court1.toggle()
+    elif pcounter < 12:
+        p_court2.toggle()
+    elif pcounter < 18:
+        p_court3.toggle()
+    elif pcounter < 24:
+        p_court4.toggle()
+    elif pcounter < 30:
+        p_court5.toggle()
+    elif pcounter < 36:
+        p_court6.toggle()
+    elif pcounter < 42:
+        for court in p_courts:
+            court.toggle()
+    pcounter += 1
+    if pcounter == 42:
+        pcounter = 0
+    time.sleep(0.5)

@@ -1,5 +1,6 @@
 # vim:set ts=4 sw=4 et:
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
 
 import os.path
 
@@ -12,7 +13,7 @@ class GpioController(object):
 
     def get_outgoing_port(self, port_id):
         port_path = os.path.join(self._base_path, 'gpio{}'.format(port_id))
-        return GpioPort(port_path=port_path)
+        return GpioOutPort(port_path=port_path)
 
 
 class GpioOutPort(object):
@@ -22,12 +23,12 @@ class GpioOutPort(object):
 
     @property
     def is_exported(self):
-        return os.path.exists(port_path)
+        return os.path.exists(self._port_path)
 
     def export(self, port_id):
         with open(os.path.join(self._base_path, 'export'), 'w') as fp:
             fp.write('{}'.format(port_id))
-        port.set_direction('out')
+        self.set_direction('out')
 
     def turn_on(self):
         print("activating port {}".format(self._port_path))
