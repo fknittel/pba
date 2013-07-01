@@ -43,6 +43,15 @@ class SprinklerJob(object):
         self.start_time = None
         self.timer = None
 
+    def for_json(self):
+        return {
+            'job_id': self.job_id,
+            'sprinkler_id': self.sprinkler_id,
+            'duration': self.duration,
+            'high_priority': self.high_priority,
+            'start_time': self.start_time,
+        }
+
 
 class MaxActiveSprinklerJobPolicy(object):
     def __init__(self, max_total, max_low_priority):
