@@ -1,0 +1,8 @@
+[Unit]
+Description=GPIO config for irrigation controller
+ConditionPathExists=|/sys/class/gpio
+After=remount-rootfs.service
+
+[Service]
+RemainAfterExit=yes
+ExecStart=/home/root/irrigationcontroller/gpio-config

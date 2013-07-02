@@ -1,0 +1,11 @@
+[Unit]
+Description=Irrigation controller daemon
+Requires=irrigationcontroller-setup.service
+After=irrigationcontroller-setup.service
+
+[Service]
+Environment=PYTHONPATH=/home/root/irrigationcontroller/
+ExecStart=twistd --syslog --nodaemon -oy /home/root/irrigationcontroller/web.py
+
+[Install]
+WantedBy=multi-user.target

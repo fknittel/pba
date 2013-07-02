@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+from gpio import *
+
+ctrl = GpioController()
+
+GPIO0_BASE = 0 * 32
+GPIO1_BASE = 1 * 32
+GPIO2_BASE = 2 * 32
+GPIO3_BASE = 2 * 32
+
+p_court1 = ctrl.export(GPIO2_BASE + 25)
+p_court2 = ctrl.export(GPIO2_BASE + 24)
+p_court3 = ctrl.export(GPIO2_BASE + 1)
+p_court4 = ctrl.export(GPIO0_BASE + 27)
+p_court5 = ctrl.export(GPIO2_BASE + 23)
+p_court6 = ctrl.export(GPIO2_BASE + 22)
+p_courts = [p_court1, p_court2, p_court3, p_court4, p_court5, p_court6]
