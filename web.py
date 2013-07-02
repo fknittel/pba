@@ -7,10 +7,6 @@ import daemon
 import json
 
 
-class RootResource(resource.Resource):
-    pass
-
-
 class JobsResource(resource.Resource):
     def __init__(self, job_queue):
         resource.Resource.__init__(self)
@@ -50,7 +46,7 @@ class WaitingJobsResource(resource.Resource):
 
 job_queue = daemon.main()
 
-root = RootResource()
+root = static.File('wwwroot')
 root.putChild('jobs', JobsResource(job_queue))
 
 site = server.Site(root)

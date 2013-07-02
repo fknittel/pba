@@ -1,0 +1,42 @@
+<!doctype html>
+<html ng-app>
+  <head>
+    <script src="libs/angular.min.js"></script>
+    <script src="app/jobs.js"></script>
+    <link rel="stylesheet" href="app/app.css">
+  </head>
+  <body>
+    <h2>Active</h2>
+    <div ng-controller="ActiveJobsController">
+      [ <a href="" ng-click="refresh()">refresh</a> ]
+      <ul class="unstyled">
+        <li ng-repeat="job in jobs">
+          <span>{{job.job_id}}</span>
+          <span>{{job.sprinkler_id}}</span>
+          <span>{{job.duration}}</span>
+          <span>{{job.start_time}}</span>
+          <span>{{job.high_priority}}</span>
+        </li>
+      </ul>
+      <form ng-submit="addJob()">
+        <input type="text" ng-model="sprinkler_id" size="30"
+               placeholder="id of sprinkler">
+        <input type="text" ng-model="duration" size="30"
+               placeholder="duration of sprinkling">
+        <input class="btn-primary" type="submit" value="add">
+      </form>
+    </div>
+    <div ng-controller="WaitingJobsController">
+      [ <a href="" ng-click="refresh()">refresh</a> ]
+      <ul class="unstyled">
+        <li ng-repeat="job in jobs">
+          <span>{{job.job_id}}</span>
+          <span>{{job.sprinkler_id}}</span>
+          <span>{{job.duration}}</span>
+          <span>{{job.start_time}}</span>
+          <span>{{job.high_priority}}</span>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
