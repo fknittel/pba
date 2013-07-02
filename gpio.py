@@ -12,22 +12,26 @@ class GpioController(object):
         self._base_path = base_path
 
     def get_outgoing_port(self, port_id):
-        port_path = os.path.join(self._base_path, 'gpio{}'.format(port_id))
-        return GpioOutPort(port_path=port_path)
+        return GpioOutPort(base_path=self._base_path, port_id=port_id)
 
 
 class GpioOutPort(object):
-    def __init__(self, port_path):
-        self._port_path = port_path
+    def __init__(self, base_path, port_id):
+	self._base_path = base_path
+	self._port_id = port_id
         self._state = False
 
     @property
     def is_exported(self):
         return os.path.exists(self._port_path)
 
-    def export(self, port_id):
+    @property
+    def _port_path(self):
+        return os.path.join(self._base_path, 'gpio{}'.format(self._port_id))
+
+    def export(self):
         with open(os.path.join(self._base_path, 'export'), 'w') as fp:
-            fp.write('{}'.format(port_id))
+            fp.write('{}'.format(self._port_id))
         self.set_direction('out')
 
     def turn_on(self):
