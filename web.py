@@ -15,9 +15,9 @@ class JobsResource(resource.Resource):
 
     def render_POST(self, request):
         new_job = json.loads(request.content.getvalue())
-        job_queue.add(new_job['sprinkler_id'], new_job['duration'],
+        job_id = job_queue.add(new_job['sprinkler_id'], new_job['duration'],
                 new_job['high_priority'])
-        return ''
+        return json.dumps({'job_id': job_id})
 
 
 class ActiveJobsResource(resource.Resource):
