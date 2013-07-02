@@ -5,7 +5,8 @@ After=irrigationcontroller-setup.service
 
 [Service]
 Environment=PYTHONPATH=/home/root/irrigationcontroller/
-ExecStart=/usr/bin/twistd --syslog --nodaemon -oy /home/root/irrigationcontroller/web.py
+WorkingDirectory=/home/root/irrigationcontroller/
+ExecStart=/usr/bin/twistd -noy /home/root/irrigationcontroller/web.py
 Restart=always
 
 [Install]
