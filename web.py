@@ -1,4 +1,7 @@
-from twisted.web import server, resource
+# vim:set ts=4 sw=4 et:
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
+from twisted.web import static, server, resource
 from twisted.application import internet, service
 import daemon
 import json

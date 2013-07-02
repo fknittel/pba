@@ -1,3 +1,6 @@
+# vim:set ts=4 sw=4 et:
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
 import httplib2
 import json
 
@@ -15,5 +18,5 @@ resp, content = h.request(URL,
                           'POST',
                           jsondata,
                           headers={'Content-Type': 'application/json'})
-print resp
-print content
+print(resp)
+print(content)
