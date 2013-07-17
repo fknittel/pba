@@ -16,16 +16,10 @@ class NullInterceptor(object):
     def turn_off(self, sprinkler):
         sprinkler.turn_off()
 
-    def check_delay_activation(self):
-        return False
-
 
 class AbstractBaseInterceptor(object):
     def __init__(self):
         self.chained_interceptor = NullInterceptor()
-
-    def check_delay_activation(self):
-        return self.chained_interceptor.check_delay_activation()
 
 
 class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
@@ -47,11 +41,6 @@ class GlobalMaximumOfActiveSprinklersInterceptor(AbstractBaseInterceptor):
 
     def _max_active_sprinklers_reached(self):
         return self._active_sprinklers == self._max_active_sprinklers
-
-    def check_delay_activation(self):
-        if self._max_active_sprinklers_reached():
-            return True
-        return AbstractBaseInterceptor.check_delay_activation(self)
 
 
 class StateVerificationInterceptor(AbstractBaseInterceptor):
@@ -199,9 +188,6 @@ class SprinklerController(object):
     def turn_off(self, sprinkler_id):
         return self._interceptor.turn_off(
                 self._sprinkler_to_port[sprinkler_id])
-
-    def check_delay_activation(self):
-        return self._interceptor.check_delay_activation()
 
     def is_valid(self, sprinkler_id):
         return sprinkler_id in self._sprinkler_to_port
