@@ -7,7 +7,7 @@ from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from web import create_site
 from ConfigParser import SafeConfigParser
-import logging
+import logging.config
 from twisted.python.log import PythonLoggingObserver
 from twistedlogging import LogObserverInjectingMultiService
 from twisted.application.internet import TCPServer  # @UnresolvedImport
@@ -28,14 +28,17 @@ class IrrigationControllerServiceMaker(object):
     options = IrrigationControllerServiceOptions
 
     def makeService(self, options):
+        config_file_name = options["config-file"]
+        http_port_nr = int(options["port"])
+
+        logging.config.fileConfig(config_file_name)
         config = SafeConfigParser()
-        config.read(options["config-file"])
-        logging.basicConfig(level=logging.DEBUG)
+        config.read(config_file_name)
         site = create_site(config)
 
         multi_service = LogObserverInjectingMultiService(
                 observer=PythonLoggingObserver().emit)
-        http_service = TCPServer(int(options["port"]), site)
+        http_service = TCPServer(http_port_nr, site)
         multi_service.addService(http_service)
 
         return multi_service
