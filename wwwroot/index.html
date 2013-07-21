@@ -1,16 +1,57 @@
-<!doctype html>
-<html ng-app>
+<!DOCTYPE html>
+<html lang="en" data-ng-app id="ng-app">
   <head>
-    <script src="libs/angular.min.js"></script>
-    <script src="app/jobs.js"></script>
+    <meta charset="utf-8">
+    <title>Bootstrap, from Twitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="libs/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link rel="stylesheet" href="app/app.css">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="libs/html5shiv/html5shiv.min.js"></script>
+    <![endif]-->
   </head>
+
   <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Project name</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
     <h2>Active</h2>
-    <div ng-controller="ActiveJobsController">
-      [ <a href="" ng-click="refresh()">refresh</a> ]
+    <div data-ng-controller="ActiveJobsController">
+      [ <a href="" data-ng-click="refresh()">refresh</a> ]
       <ul class="unstyled">
-        <li ng-repeat="job in jobs">
+        <li data-ng-repeat="job in jobs">
           <span>{{job.job_id}}</span>
           <span>{{job.sprinkler_id}}</span>
           <span>{{job.duration}}</span>
@@ -18,18 +59,18 @@
           <span>{{job.high_priority}}</span>
         </li>
       </ul>
-      <form ng-submit="addJob()">
-        <input type="text" ng-model="sprinkler_id" size="30"
+      <form data-ng-submit="addJob()">
+        <input type="text" data-ng-model="sprinkler_id" size="30"
                placeholder="id of sprinkler">
-        <input type="text" ng-model="duration" size="30"
+        <input type="text" data-ng-model="duration" size="30"
                placeholder="duration of sprinkling">
         <input class="btn-primary" type="submit" value="add">
       </form>
     </div>
-    <div ng-controller="WaitingJobsController">
+    <div data-ng-controller="WaitingJobsController">
       [ <a href="" ng-click="refresh()">refresh</a> ]
       <ul class="unstyled">
-        <li ng-repeat="job in jobs">
+        <li data-ng-repeat="job in jobs">
           <span>{{job.job_id}}</span>
           <span>{{job.sprinkler_id}}</span>
           <span>{{job.duration}}</span>
@@ -38,5 +79,23 @@
         </li>
       </ul>
     </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="app/jobs.js"></script>
+  </body>
+</html>
+
+
+
+<html>
+  <head>
+  </head>
+  <body>
   </body>
 </html>
