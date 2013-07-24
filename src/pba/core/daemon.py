@@ -38,7 +38,7 @@ def main(config):
     load_sprinklers(config, gpio_ctrl, sprinkler_ctrl)
     load_sprinkler_interceptors(sprinkler_ctrl)
 
-    return sprinkler_job_queue
+    return sprinkler_job_queue, sprinkler_ctrl
 
 
 if __name__ == '__main__':

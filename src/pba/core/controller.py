@@ -191,3 +191,7 @@ class SprinklerController(object):
 
     def is_valid(self, sprinkler_id):
         return sprinkler_id in self._sprinkler_to_port
+
+    @property
+    def sprinkler_ids(self):
+        return self._sprinkler_to_port.keys()
