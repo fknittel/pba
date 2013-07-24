@@ -3,8 +3,8 @@ from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 import time
 import copy
-from controller import SprinklerException
-from task_ext import defer_later
+from pba.controller import SprinklerException
+from pba.task_ext import defer_later
 
 
 class Queue(object):

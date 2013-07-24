@@ -17,8 +17,8 @@ class GpioController(object):
 
 class GpioOutPort(object):
     def __init__(self, base_path, port_id):
-	self._base_path = base_path
-	self._port_id = port_id
+        self._base_path = base_path
+        self._port_id = port_id
         self._state = False
 
     @property

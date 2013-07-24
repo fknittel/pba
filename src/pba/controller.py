@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 import time
-from task_ext import defer_later
+from pba.task_ext import defer_later
 
 
 class SprinklerException(Exception):
