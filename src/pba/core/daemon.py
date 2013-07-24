@@ -2,15 +2,15 @@
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 import sys
-from pba import gpio
+from pba.core import gpio
 from twisted.internet import reactor
 import weakref
-from pba.controller import MaximumAverageRuntimeInterceptor, \
+from pba.core.controller import MaximumAverageRuntimeInterceptor, \
     GlobalMaximumOfActiveSprinklersInterceptor, StateVerificationInterceptor, \
     SprinklerController
-from pba.job_queue import MaxActiveSprinklerJobPolicy, SprinklerJobQueue
+from pba.core.job_queue import MaxActiveSprinklerJobPolicy, SprinklerJobQueue
 from ConfigParser import SafeConfigParser
-from pba.sprinkler_config import load_sprinklers
+from pba.core.sprinkler_config import load_sprinklers
 
 
 def load_sprinkler_interceptors(sprinkler_ctrl):

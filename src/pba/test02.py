@@ -2,7 +2,7 @@
 # vim:set ts=4 sw=4 et:
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
-from pba.gpio import GpioController
+from pba.core.gpio import GpioController
 import time
 
 ctrl = GpioController()

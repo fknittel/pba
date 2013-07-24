@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 from twisted.web import static, server, resource
-from pba import daemon
+from pba.core import daemon
 import json
 
 

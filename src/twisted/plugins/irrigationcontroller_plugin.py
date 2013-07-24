@@ -5,11 +5,11 @@ from zope.interface import implements
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
-from pba.web import create_site
+from pba.client.web import create_site
 from ConfigParser import SafeConfigParser
 import logging.config
 from twisted.python.log import PythonLoggingObserver
-from pba.twistedlogging import LogObserverInjectingMultiService
+from pba.core.logging import LogObserverInjectingMultiService
 from twisted.application.internet import TCPServer  # @UnresolvedImport
 
 
