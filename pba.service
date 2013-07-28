@@ -1,0 +1,13 @@
+[Unit]
+Description=PBA daemon
+Requires=pba-setup.service
+After=pba-setup.service
+
+[Service]
+Environment=PYTHONPATH=/home/root/pba/
+WorkingDirectory=/home/root/pba/
+ExecStart=/usr/bin/twistd -noy /home/root/pba/web.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

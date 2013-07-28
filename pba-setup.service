@@ -1,8 +1,8 @@
 [Unit]
-Description=GPIO config for irrigation controller
+Description=GPIO config for PBA
 ConditionPathExists=|/sys/class/gpio
 After=remount-rootfs.service
 
 [Service]
 RemainAfterExit=yes
-ExecStart=/home/root/irrigationcontroller/gpio-config
+ExecStart=/home/root/pba/gpio-config
