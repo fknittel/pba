@@ -1,0 +1,16 @@
+#!/usr/bin/python
+# vim:set ts=4 sw=4 et ft=python:
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
+import os.path
+import sys
+
+PYTHON_BASE_PATH = os.path.join(
+        os.path.abspath(os.path.dirname(sys.argv[0])), b'src')
+
+sys.path.insert(0, PYTHON_BASE_PATH)
+sys.argv.insert(1, b'pba')
+sys.argv.insert(1, b'-no')
+
+from twisted.scripts.twistd import run
+run()

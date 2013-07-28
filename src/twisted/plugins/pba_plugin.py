@@ -23,7 +23,7 @@ class IrrigationControllerServiceOptions(usage.Options):
 
 class IrrigationControllerServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = "irrigationcontroller"
+    tapname = "pba"
     description = "Starts the irrigation controller service"
     options = IrrigationControllerServiceOptions
 

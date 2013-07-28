@@ -4,9 +4,8 @@ Requires=pba-setup.service
 After=pba-setup.service
 
 [Service]
-Environment=PYTHONPATH=/home/root/pba/
 WorkingDirectory=/home/root/pba/
-ExecStart=/usr/bin/twistd -noy /home/root/pba/web.py
+ExecStart=./pba -c gpio-example.conf
 Restart=always
 
 [Install]
