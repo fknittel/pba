@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app id="ng-app">
   <head>
-    <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="utf-8" />
+    <title>PBA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    -->
 
-    <!-- Le styles -->
-    <link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css" />
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <link href="libs/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-    <link rel="stylesheet" href="app/app.css">
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-responsive.css" />
+    <link rel="stylesheet" href="app/app.css" />
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="libs/html5shiv/html5shiv.min.js"></script>
     <![endif]-->
@@ -46,56 +46,42 @@
     </div>
 
     <div class="container">
-
-    <h2>Active</h2>
-    <div data-ng-controller="ActiveJobsController">
-      [ <a href="" data-ng-click="refresh()">refresh</a> ]
-      <ul class="unstyled">
-        <li data-ng-repeat="job in jobs">
-          <span>{{job.job_id}}</span>
-          <span>{{job.sprinkler_id}}</span>
-          <span>{{job.duration}}</span>
-          <span>{{job.start_time}}</span>
-          <span>{{job.high_priority}}</span>
-        </li>
-      </ul>
-      <form data-ng-submit="addJob()">
-        <input type="text" data-ng-model="sprinkler_id" size="30"
-               placeholder="id of sprinkler">
-        <input type="text" data-ng-model="duration" size="30"
-               placeholder="duration of sprinkling">
-        <input class="btn-primary" type="submit" value="add">
-      </form>
-    </div>
-    <div data-ng-controller="WaitingJobsController">
-      [ <a href="" ng-click="refresh()">refresh</a> ]
-      <ul class="unstyled">
-        <li data-ng-repeat="job in jobs">
-          <span>{{job.job_id}}</span>
-          <span>{{job.sprinkler_id}}</span>
-          <span>{{job.duration}}</span>
-          <span>{{job.start_time}}</span>
-          <span>{{job.high_priority}}</span>
-        </li>
-      </ul>
-    </div>
-
+	    <h2>Active</h2>
+	    <div data-ng-controller="ActiveJobsController">
+	      <a href="" class="btn" data-ng-click="refresh()">refresh</a>
+	      <ul class="unstyled">
+	        <li data-ng-repeat="job in jobs">
+	          <span>{{job.job_id}}</span>
+	          <span>{{job.sprinkler_id}}</span>
+	          <span>{{job.duration}}</span>
+	          <span>{{job.start_time}}</span>
+	          <span>{{job.high_priority}}</span>
+	        </li>
+	      </ul>
+          <form data-ng-submit="addJob()">
+	        <input type="text" data-ng-model="sprinkler_id" size="30"
+	               placeholder="id of sprinkler">
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="WaitingJobsController">
+	      <a href="" class="btn" ng-click="refresh()">refresh</a>
+	      <ul class="unstyled">
+	        <li data-ng-repeat="job in jobs">
+	          <span>{{job.job_id}}</span>
+	          <span>{{job.sprinkler_id}}</span>
+	          <span>{{job.duration}}</span>
+	          <span>{{job.start_time}}</span>
+	          <span>{{job.high_priority}}</span>
+	        </li>
+	      </ul>
+	    </div>
     </div> <!-- /container -->
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="libs/angular/angular.min.js"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js"></script>
     <script src="app/jobs.js"></script>
-  </body>
-</html>
-
-
-
-<html>
-  <head>
-  </head>
-  <body>
   </body>
 </html>

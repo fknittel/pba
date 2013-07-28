@@ -26,6 +26,8 @@ function ActiveJobsController($scope, $http) {
 		    	$scope.jobs = [];
 		    });
     };
+
+    $scope.refresh();
 }
 function WaitingJobsController($scope, $http) {
     $scope.jobs = [];
@@ -39,4 +41,6 @@ function WaitingJobsController($scope, $http) {
 		    	$scope.jobs = [];
 		    });
     };
+    
+    $scope.refresh();
 }
