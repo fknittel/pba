@@ -56,10 +56,14 @@
 	          <span>{{job.duration}}</span>
 	          <span>{{job.start_time}}</span>
 	          <span>{{job.high_priority}}</span>
+              <form data-ng-submit="removeJob(job.job_id)">
+                <input class="btn btn-large" type="submit"
+                    value="Remove" />
+              </form>
 	        </li>
 	      </ul>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court1')">
             Court 1
 	        <input type="text" data-ng-model="duration" size="30"
@@ -67,7 +71,7 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court2')">
             Court 2
 	        <input type="text" data-ng-model="duration" size="30"
@@ -75,7 +79,7 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court3')">
             Court 3
 	        <input type="text" data-ng-model="duration" size="30"
@@ -83,7 +87,7 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court4')">
             Court 4
 	        <input type="text" data-ng-model="duration" size="30"
@@ -91,7 +95,7 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court5')">
             Court 5
 	        <input type="text" data-ng-model="duration" size="30"
@@ -99,7 +103,7 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
-	    <div data-ng-controller="ActiveJobsController">
+	    <div data-ng-controller="JobsController">
           <form data-ng-submit="addJob('court6')">
             Court 6
 	        <input type="text" data-ng-model="duration" size="30"
@@ -116,6 +120,10 @@
 	          <span>{{job.duration}}</span>
 	          <span>{{job.start_time}}</span>
 	          <span>{{job.high_priority}}</span>
+              <form data-ng-submit="removeJob(job.job_id)">
+                <input class="btn btn-large" type="submit"
+                    value="Remove" />
+              </form>
 	        </li>
 	      </ul>
 	    </div>

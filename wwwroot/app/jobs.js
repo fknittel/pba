@@ -1,6 +1,4 @@
-function ActiveJobsController($scope, $http) {
-    $scope.jobs = [];
- 
+function JobsController($scope, $http) {
     $scope.addJob = function(sprinkler_id) {
     	var new_job = {
         	sprinkler_id: sprinkler_id,
@@ -13,8 +11,20 @@ function ActiveJobsController($scope, $http) {
 	  	    }).
 		    error(function(data, status, headers, config) {
 		    });
-        $scope.sprinkler_id = '';
         $scope.duration = '';
+    };
+}
+
+function ActiveJobsController($scope, $http) {
+    $scope.jobs = [];
+ 
+    $scope.removeJob = function(sprinkler_id) {
+	    $http({method: 'DELETE', url: '/jobs/active/' + sprinkler_id}).
+		    success(function(data, status, headers, config) {
+		    	$scope.refresh();
+	  	    }).
+		    error(function(data, status, headers, config) {
+		    });
     };
  
     $scope.refresh = function() {
@@ -29,9 +39,19 @@ function ActiveJobsController($scope, $http) {
 
     $scope.refresh();
 }
+
 function WaitingJobsController($scope, $http) {
     $scope.jobs = [];
- 
+  
+    $scope.removeJob = function(sprinkler_id) {
+	    $http({method: 'DELETE', url: '/jobs/waiting/' + sprinkler_id}).
+		    success(function(data, status, headers, config) {
+		    	$scope.refresh();
+	  	    }).
+		    error(function(data, status, headers, config) {
+		    });
+    };
+
     $scope.refresh = function() {
 	    $http({method: 'GET', url: '/jobs/waiting'}).
 		    success(function(data, status, headers, config) {
