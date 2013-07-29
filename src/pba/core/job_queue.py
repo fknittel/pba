@@ -134,7 +134,7 @@ class PriorityJobQueue(object):
 
     def remove(self, job_id):
         for _, queue in self._queues:
-            job = queue.remove(lambda x: x.job_id == job_id)
+            job = queue.remove(job_id)
             if job is not None:
                 return job
         raise ValueError('job with id {} not found'.format(job_id))
