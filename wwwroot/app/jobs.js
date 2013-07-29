@@ -1,9 +1,9 @@
 function ActiveJobsController($scope, $http) {
     $scope.jobs = [];
  
-    $scope.addJob = function() {
+    $scope.addJob = function(sprinkler_id) {
     	var new_job = {
-        	sprinkler_id: $scope.sprinkler_id,
+        	sprinkler_id: sprinkler_id,
         	duration: parseInt($scope.duration),
     	    high_priority: false,
     	    };

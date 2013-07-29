@@ -58,9 +58,50 @@
 	          <span>{{job.high_priority}}</span>
 	        </li>
 	      </ul>
-          <form data-ng-submit="addJob()">
-	        <input type="text" data-ng-model="sprinkler_id" size="30"
-	               placeholder="id of sprinkler">
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court1')">
+            Court 1
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court2')">
+            Court 2
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court3')">
+            Court 3
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court4')">
+            Court 4
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court5')">
+            Court 5
+	        <input type="text" data-ng-model="duration" size="30"
+	               placeholder="duration of sprinkling">
+	        <input class="btn btn-primary btn-large" type="submit" value="add" />
+	      </form>
+	    </div>
+	    <div data-ng-controller="ActiveJobsController">
+          <form data-ng-submit="addJob('court6')">
+            Court 6
 	        <input type="text" data-ng-model="duration" size="30"
 	               placeholder="duration of sprinkling">
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
