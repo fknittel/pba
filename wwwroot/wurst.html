@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app id="ng-app">
+  <head>
+    <meta charset="utf-8" />
+    <title>PBA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    -->
+
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css" />
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-responsive.css" />
+    <link rel="stylesheet" href="app/app.css" />
+
+    <!--[if lt IE 9]>
+      <script src="libs/html5shiv/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="index.html">Original Mode</a></li>
+              <li class="active"><a href="wurst.html">Wurstfinger Mode</a></li>
+              <!-- <li><a href="#contact">Contact</a></li> -->
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Active Jobs</h2>
+      <div data-ng-controller="ActiveJobsController">
+        <a href="" class="btn" data-ng-click="refresh()">refresh active list</a>
+        <ul class="unstyled">
+          <li data-ng-repeat="job in jobs">
+            <span>{{job.job_id}}</span>
+            <span>{{job.sprinkler_id}}</span>
+            <span>{{job.duration}}</span>
+            <span>{{job.start_time}}</span>
+            <span>{{job.high_priority}}</span>
+              <form data-ng-submit="removeJob(job.job_id)">
+                <input class="btn btn-large" type="submit"
+                    value="Remove" />
+              </form>
+          </li>
+        </ul>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court1')">
+            Court 1
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court2')">
+            Court 2
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court3')">
+            Court 3
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court4')">
+            Court 4
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court5')">
+            Court 5
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <div data-ng-controller="JobsController">
+          <form data-ng-submit="addJob('court6')">
+            Court 6
+          <input type="text" data-ng-model="duration" size="30"
+                 placeholder="duration of sprinkling">
+          <input class="btn btn-primary btn-large" type="submit" value="add" />
+        </form>
+      </div>
+      <h2>Waiting Jobs</h2>
+      <div data-ng-controller="WaitingJobsController">
+        <a href="" class="btn" ng-click="refresh()">refresh waiting list</a>
+        <ul class="unstyled">
+          <li data-ng-repeat="job in jobs">
+            <span>{{job.job_id}}</span>
+            <span>{{job.sprinkler_id}}</span>
+            <span>{{job.duration}}</span>
+            <span>{{job.start_time}}</span>
+            <span>{{job.high_priority}}</span>
+              <form data-ng-submit="removeJob(job.job_id)">
+                <input class="btn btn-large" type="submit"
+                    value="Remove" />
+              </form>
+          </li>
+        </ul>
+      </div>
+    </div> <!-- /container -->
+
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="app/jobs.js"></script>
+  </body>
+</html>
