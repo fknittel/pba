@@ -46,9 +46,9 @@
     </div>
 
     <div class="container">
-	    <h2>Active</h2>
+	    <h2>Active Jobs</h2>
 	    <div data-ng-controller="ActiveJobsController">
-	      <a href="" class="btn" data-ng-click="refresh()">refresh</a>
+	      <a href="" class="btn" data-ng-click="refresh()">refresh active list</a>
 	      <ul class="unstyled">
 	        <li data-ng-repeat="job in jobs">
 	          <span>{{job.job_id}}</span>
@@ -111,8 +111,9 @@
 	        <input class="btn btn-primary btn-large" type="submit" value="add" />
 	      </form>
 	    </div>
+	    <h2>Waiting Jobs</h2>
 	    <div data-ng-controller="WaitingJobsController">
-	      <a href="" class="btn" ng-click="refresh()">refresh</a>
+	      <a href="" class="btn" ng-click="refresh()">refresh waiting list</a>
 	      <ul class="unstyled">
 	        <li data-ng-repeat="job in jobs">
 	          <span>{{job.job_id}}</span>
