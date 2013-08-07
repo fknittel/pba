@@ -156,6 +156,9 @@ class SprinklerJobQueue(object):
     def add(self, sprinkler_id, duration, high_priority=False):
         if not self._sprinkler_ctrl.is_valid(sprinkler_id):
             raise RuntimeError('Invalid sprinkler id {}'.format(sprinkler_id))
+        if duration is None or duration <= 0:
+            raise RuntimeError('Invalid duration "{}", ' \
+                    'needs to be greater than 0'.format(duration))
 
         job_id = self._get_next_job_id()
         job = SprinklerJob(job_id, sprinkler_id, duration, high_priority)
