@@ -262,7 +262,7 @@ class SprinklerJobQueue(object):
         return self._last_job_id
 
     def remove_waiting_job(self, job_id):
-        self._waiting_jobs.remove(job_id)
+        return self._waiting_jobs.remove(job_id)
 
     def list_waiting_jobs(self):
         return self._waiting_jobs.list_all()
@@ -288,6 +288,7 @@ class SprinklerJobQueue(object):
     def remove_active_job(self, job_id):
         job = self._active_jobs.remove(job_id)
         job.cancel()
+        return job
 
     def _on_end_of_duration(self, job):
         self._active_jobs.remove(job.job_id)

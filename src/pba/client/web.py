@@ -100,8 +100,8 @@ class ActiveJobResource(resource.Resource):
         return json_response(request, job.for_json())
 
     def render_DELETE(self, request):
-        self._job_queue.remove_active_job(self._job_id)
-        return b''
+        job = self._job_queue.remove_active_job(self._job_id)
+        return json_response(request, job.for_json())
 
     def render_POST(self, request):
         modified_job = json.loads(request.content.getvalue())
@@ -135,8 +135,8 @@ class WaitingJobResource(resource.Resource):
         return json_response(request, job.for_json())
 
     def render_DELETE(self, request):
-        self._job_queue.remove_waiting_job(self._job_id)
-        return b''
+        job = self._job_queue.remove_waiting_job(self._job_id)
+        return json_response(request, job.for_json())
 
     def render_POST(self, request):
         modified_job = json.loads(request.content.getvalue())
