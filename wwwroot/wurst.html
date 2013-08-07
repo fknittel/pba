@@ -219,7 +219,6 @@
   }
 
   function wassern(id, event) {
-    //alert('wassern ' + id); exit;
     var new_job = {
         sprinkler_id: 'court' + id,
         duration: 60,
@@ -236,7 +235,7 @@
         refresh_status(id);
       },
       error: function(msg) {
-        alert('error' + msg);
+        alert('error wassern' + msg);
       }
     });
   }
@@ -297,7 +296,7 @@
         }
       },
       error: function(msg) {
-        alert('error' + msg);
+        alert('error refresh status ' + id + " " + msg);
       }
     });
   }
