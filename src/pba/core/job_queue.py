@@ -99,6 +99,7 @@ class SprinklerJob(object):
     duration = property(_get_duration, _set_duration)
 
     def start(self):
+        print('starting job {}'.format(self.job_id))
         self.start_time = time.time()
         self.status = self.JOB_ACTIVE
         self._start_timer_with_duration(self.duration)
@@ -112,8 +113,8 @@ class SprinklerJob(object):
         self.stop_time = time.time()
         self.timer = None
 
-        self.on_stop()
         self.on_finished()
+        self.on_stop()
 
     def cancel(self):
         self.status = self.JOB_CANCELLED
