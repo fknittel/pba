@@ -86,7 +86,7 @@ class CourtResource(resource.Resource):
         if self._job is not None:
             return json_response(request,
                     create_inactive_court_for_json(self._court_id))
-        return json_response(request, job)
+        return json_response(request, self._job)
 
     def render_POST(self, request):
         new_job = json.loads(request.content.getvalue())
