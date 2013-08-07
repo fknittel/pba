@@ -64,9 +64,16 @@ class SprinklerJob(object):
             'duration': self.duration,
             'high_priority': self.high_priority,
             'start_time': self.start_time,
+            'remaining_time': self.remaining_time,
             'stop_time': self.stop_time,
             'status': self.status,
         }
+
+    @property
+    def remaining_time(self):
+        if self.status != self.JOB_ACTIVE:
+            return None
+        return (self.start_time + self.duration) - time.time()
 
     def start(self, clock, on_finished):
         self.start_time = time.time()
