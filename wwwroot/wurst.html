@@ -250,6 +250,10 @@
       async: true,
       success: function(msg) {
         var jobid = msg.job_id;
+        if (jobid == null) {
+          alert("hier kann nichts abgebrochen werden");
+          return;
+        }
         abbrechen2(jobid)
       },
       error: function(msg) {
