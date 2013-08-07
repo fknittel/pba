@@ -28,8 +28,7 @@ class JobsResource(resource.Resource):
 
     def render_GET(self, request):
         return json_response(request, [job.for_json() for job \
-                in (self._job_queue.list_active_jobs() + \
-                        self._job_queue.list_waiting_jobs())])
+                in self._job_queue.list_jobs()])
 
     def getChild(self, path, request): 
         job_id = int(path)
@@ -42,13 +41,25 @@ class JobsResource(resource.Resource):
 class CourtsResource(resource.Resource):
     isLeaf = True
 
-    def __init__(self, sprinkler_ctrl):
+    def __init__(self, sprinkler_ctrl, job_queue):
         resource.Resource.__init__(self)
-        self.sprinkler_ctrl = sprinkler_ctrl
+        self._sprinkler_ctrl = sprinkler_ctrl
+        self._job_queue = job_queue
 
     def render_GET(self, request):
-        return json_response(request,
-                sorted(self.sprinkler_ctrl.sprinkler_ids))
+        jobs = self._job_queue.list_jobs()
+        courts = []
+        for sprinkler_id in sorted(self._sprinkler_ctrl.sprinkler_ids):
+            courts.append(self._filter_for(jobs, sprinkler_id))
+        return json_response(request, courts)
+
+    def _filter_for(self, jobs, sprinkler_id):
+        for job in jobs:
+            if job.sprinkler_id == sprinkler_id:
+                return job.for_json()
+        return {'sprinkler_id': sprinkler_id,
+                'status': 'inactive',
+                }
 
 
 class ActiveJobsResource(resource.Resource):
@@ -112,7 +123,7 @@ def create_site(config):
 
     root = static.File('wwwroot')
     root.putChild('jobs', JobsResource(job_queue))
-    root.putChild('courts', CourtsResource(sprinkler_ctrl))
+    root.putChild('courts', CourtsResource(sprinkler_ctrl, job_queue))
 
     site = server.Site(root)
     return site

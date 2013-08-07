@@ -281,3 +281,6 @@ class SprinklerJobQueue(object):
         if job is not None:
             return job
         return self.get_waiting_jobs(job_id)
+
+    def list_jobs(self):
+        return self.list_active_jobs() + self.list_waiting_jobs()
