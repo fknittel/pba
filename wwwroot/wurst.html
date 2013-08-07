@@ -218,13 +218,35 @@
   }
 
   function wassern(id, event) {
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        var jobid = msg.job_id;
+        if (jobid == null) {
+          wassern2(id, 60);
+          return;
+        } else {
+          wassern2(id, 60 + msg.duration);
+          return;
+        }
+      },
+      error: function(msg) {
+        alert('error wassern' + msg);
+      }
+    });
+  }
+
+  function wassern2(id, gesamtzeit) {
     var new_job = {
-        sprinkler_id: 'court' + id,
-        duration: 60,
-        high_priority: false,
+        duration: gesamtzeit,
+        high_priority: true,
     };
     $.ajax({
-      url: '/jobs',
+      url: '/courts/court' + id,
       type: 'POST',
       data: JSON.stringify(new_job),
       contentType: 'application/json; charset=utf-8',
@@ -234,7 +256,7 @@
         refresh_status(id);
       },
       error: function(msg) {
-        alert('error wassern' + msg);
+        alert('error wassern2' + msg);
       }
     });
   }
