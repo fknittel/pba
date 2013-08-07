@@ -242,8 +242,37 @@
   }
 
   function abbrechen(id, event) {
-    alert('abbrechen ' + id);
     event.stopPropagation();
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        var jobid = msg.job_id;
+        abbrechen2(jobid)
+      },
+      error: function(msg) {
+        alert('error abbrechen' + msg);
+      }
+    });
+  }
+
+  function abbrechen2(jobid) {
+    $.ajax({
+      url: '/jobs/' + jobid,
+      type: 'DELETE',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+         refresh_all();
+      },
+      error: function(msg) {
+        alert('error abbrechen2' + msg);
+      }
+    });
   }
 
   function refresh_status(id) {
