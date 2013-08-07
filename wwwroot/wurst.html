@@ -76,8 +76,8 @@
               </div>
             </td>
             <td class="span4">
-              <div id="court3button" onClick="javascript:wassern(3)" style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
-                <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+              <div id="court3button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
+                <div id="court3xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
                 </div>
                 Platz 3
@@ -100,7 +100,7 @@
           <tr>
             <td class="span4">
               <div id="court4button" onClick="javascript:wassern(4)" style="display: block; width: 80%;" type="button" class="btn btn-large">
-                <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                <div id="court4xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
                 </div>
                 Platz 4
@@ -116,7 +116,7 @@
             </td>
             <td class="span4">
               <div id="court5button" onClick="javascript:wassern(5)" style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
-                <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                <div id="court5xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
                 </div>
                 Platz 5
@@ -157,8 +157,77 @@
 
 
   <script type="text/javascript">
-  function wassern(id) {
-    //document.getElementById("argh").innerHTML = "Hello, world!" + id;
+
+  elem = document.getElementById("court1button");
+  elem.addEventListener("click", wassern_id1, false);
+  // elem = document.getElementById("court1xbutton");
+  // elem.addEventListener("click", abbrechen_id1, false);
+
+  elem = document.getElementById("court2button");
+  elem.addEventListener("click", wassern_id2, false);
+  // elem = document.getElementById("court2xbutton");
+  // elem.addEventListener("click", abbrechen_id2, false);
+
+  elem = document.getElementById("court3button");
+  elem.addEventListener("click", wassern_id3, false);
+  elem = document.getElementById("court3xbutton");
+  elem.addEventListener("click", abbrechen_id3, false);
+
+  elem = document.getElementById("court4button");
+  elem.addEventListener("click", wassern_id4, false);
+  elem = document.getElementById("court4xbutton");
+  elem.addEventListener("click", abbrechen_id4, false);
+
+  elem = document.getElementById("court5button");
+  elem.addEventListener("click", wassern_id5, false);
+  elem = document.getElementById("court5xbutton");
+  elem.addEventListener("click", abbrechen_id5, false);
+
+  elem = document.getElementById("court6button");
+  elem.addEventListener("click", wassern_id6, false);
+  // elem = document.getElementById("court6xbutton");
+  // elem.addEventListener("click", abbrechen_id6, false);
+
+  function wassern_id1(event) {
+    wassern(1, event)
+  }
+  function wassern_id2(event) {
+    wassern(2, event)
+  }
+  function wassern_id3(event) {
+    wassern(3, event)
+  }
+  function wassern_id4(event) {
+    wassern(4, event)
+  }
+  function wassern_id5(event) {
+    wassern(5, event)
+  }
+  function wassern_id6(event) {
+    wassern(6, event)
+  }
+
+  function abbrechen_id1(event) {
+    abbrechen(1, event)
+  }
+  function abbrechen_id2(event) {
+    abbrechen(2, event)
+  }
+  function abbrechen_id3(event) {
+    abbrechen(3, event)
+  }
+  function abbrechen_id4(event) {
+    abbrechen(4, event)
+  }
+  function abbrechen_id5(event) {
+    abbrechen(5, event)
+  }
+  function abbrechen_id6(event) {
+    abbrechen(6, event)
+  }
+
+  function wassern(id, event) {
+    //alert('wassern ' + id); exit;
     var new_job = {
         sprinkler_id: 'court' + id,
         duration: 60,
@@ -180,7 +249,10 @@
     });
   }
 
-
+  function abbrechen(id, event) {
+    alert('abbrechen ' + id);
+    event.stopPropagation();
+  }
 
   </script>
 
