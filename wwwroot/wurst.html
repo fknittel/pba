@@ -224,7 +224,7 @@
       dataType: 'json',
       async: true,
       success: function(msg) {
-        // alert('success' + msg);
+        refresh_status(id);
       },
       error: function(msg) {
         alert('error' + msg);
@@ -235,6 +235,22 @@
   function abbrechen(id, event) {
     alert('abbrechen ' + id);
     event.stopPropagation();
+  }
+
+  function refresh_status(id) {
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        document.getElementById("court" + id + "status").innerHTML = msg.status + msg.start_time;
+      },
+      error: function(msg) {
+        alert('error' + msg);
+      }
+    });
   }
 
   </script>
