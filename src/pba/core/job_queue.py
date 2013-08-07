@@ -2,7 +2,6 @@
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 import time
-import copy
 from pba.core.controller import SprinklerException
 from pba.core.task_ext import defer_later
 
@@ -30,7 +29,7 @@ class Queue(object):
                 return item
 
     def list_all(self):
-        return copy.deepcopy(self._queue)
+        return self._queue
 
     def find(self, match_func):
         for _, item in enumerate(self._queue):
@@ -59,11 +58,6 @@ class SprinklerJob(object):
         self.timer = None
         self.on_stop = None
         self.on_finished = None
-
-    def __getstate__(self):
-        state = dict(self.__dict__)
-        del state['_clock']
-        return state
 
     def for_json(self):
         return {
@@ -256,7 +250,7 @@ class SprinklerJobQueue(object):
         job.on_finished = lambda: self._on_end_of_duration(job)
         self._waiting_jobs.push(job)
         self._attempt_next_job()
-        return job_id
+        return job
 
     def _get_next_job_id(self):
         self._last_job_id += 1

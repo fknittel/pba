@@ -22,9 +22,9 @@ class JobsResource(resource.Resource):
 
     def render_POST(self, request):
         new_job = json.loads(request.content.getvalue())
-        job_id = self._job_queue.add(new_job['sprinkler_id'],
+        job = self._job_queue.add(new_job['sprinkler_id'],
                 new_job['duration'], new_job['high_priority'])
-        return json_response(request, {'job_id': job_id})
+        return json_response(request, job.for_json())
 
     def render_GET(self, request):
         return json_response(request, [job.for_json() for job \
@@ -38,13 +38,23 @@ class JobsResource(resource.Resource):
         return WaitingJobResource(job_queue=self._job_queue, job_id=job_id)
 
 
-def court_status_from_jobs(sprinkler_id, jobs):
+def find_job_for_court(sprinkler_id, jobs):
     for job in jobs:
         if job.sprinkler_id == sprinkler_id:
-            return job.for_json()
+            return job
+
+
+def create_inactive_court_for_json(sprinkler_id):
     return {'sprinkler_id': sprinkler_id,
             'status': 'inactive',
             }
+
+
+def court_status_from_jobs(sprinkler_id, jobs):
+    job = find_job_for_court(sprinkler_id, jobs)
+    if job is not None:
+        return job.for_json()
+    return create_inactive_court_for_json(sprinkler_id)
 
 
 class CourtsResource(resource.Resource):
@@ -67,13 +77,27 @@ class CourtsResource(resource.Resource):
 class CourtResource(resource.Resource):
     def __init__(self, court_id, job_queue):
         resource.Resource.__init__(self)
-        self._court_id = court_id
         self._job_queue = job_queue
+        self._court_id = court_id
+        self._job = find_job_for_court(self._court_id,
+                self._job_queue.list_jobs())
 
     def render_GET(self, request):
-        jobs = self._job_queue.list_jobs()
-        return json_response(request, court_status_from_jobs(self._court_id,
-            jobs))
+        if self._job is not None:
+            return json_response(request,
+                    create_inactive_court_for_json(self._court_id))
+        return json_response(request, job)
+
+    def render_POST(self, request):
+        new_job = json.loads(request.content.getvalue())
+        duration = new_job['duration']
+        if self._job is not None:
+            self._job.duration = duration
+            return json_response(request, self._job.for_json())
+
+        job = self._job_queue.add(self._court_id,
+                duration, new_job['high_priority'])
+        return json_response(request, job.for_json())
 
 
 class ActiveJobsResource(resource.Resource):
