@@ -103,6 +103,13 @@ class ActiveJobResource(resource.Resource):
         self._job_queue.remove_active_job(self._job_id)
         return b''
 
+    def render_POST(self, request):
+        modified_job = json.loads(request.content.getvalue())
+
+        job = self._job_queue.get_active_job(self._job_id)
+        job.duration = modified_job['duration']
+        return json_response(request, job.for_json())
+
 
 class WaitingJobsResource(resource.Resource):
     def __init__(self, job_queue):
@@ -130,6 +137,13 @@ class WaitingJobResource(resource.Resource):
     def render_DELETE(self, request):
         self._job_queue.remove_waiting_job(self._job_id)
         return b''
+
+    def render_POST(self, request):
+        modified_job = json.loads(request.content.getvalue())
+
+        job = self._job_queue.get_waiting_job(self._job_id)
+        job.duration = modified_job['duration']
+        return json_response(request, job.for_json())
 
 
 def create_site(config):

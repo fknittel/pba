@@ -45,10 +45,12 @@ class SprinklerJob(object):
     JOB_FINISHED = 'finished'
     JOB_CANCELLED = 'cancelled'
 
-    def __init__(self, job_id, sprinkler_id, duration, high_priority=False):
+    def __init__(self, clock, job_id, sprinkler_id, duration,
+            high_priority=False):
+        self._clock = clock
         self.job_id = job_id
         self.sprinkler_id = sprinkler_id
-        self.duration = duration
+        self._duration = duration
         self.high_priority = high_priority
 
         self.status = self.JOB_WAITING
@@ -56,6 +58,12 @@ class SprinklerJob(object):
         self.stop_time = None
         self.timer = None
         self.on_stop = None
+        self.on_finished = None
+
+    def __getstate__(self):
+        state = dict(self.__dict__)
+        del state['_clock']
+        return state
 
     def for_json(self):
         return {
@@ -75,22 +83,44 @@ class SprinklerJob(object):
             return None
         return (self.start_time + self.duration) - time.time()
 
-    def start(self, clock, on_finished):
+    def _get_duration(self):
+        return self._duration
+
+    def _set_duration(self, duration):
+        self._duration = duration
+        if self.timer is not None:
+            remaining_time = self.remaining_time
+            if remaining_time > 0:
+                self.timer.cancel()
+                self._start_timer_with_duration(self.remaining_time)
+            else:
+                self.cancel()
+
+    duration = property(_get_duration, _set_duration)
+
+    def start(self):
         self.start_time = time.time()
         self.status = self.JOB_ACTIVE
-        self.timer = defer_later(clock, self.duration,
-                lambda: self._on_finished(on_finished), self)
+        self._start_timer_with_duration(self.duration)
 
-    def _on_finished(self, on_finished):
+    def _start_timer_with_duration(self, duration):
+        self.timer = defer_later(self._clock, duration,
+                lambda _: self._on_finished(), self)
+
+    def _on_finished(self):
         self.status = self.JOB_FINISHED
         self.stop_time = time.time()
+        self.timer = None
+
         self.on_stop()
-        on_finished()
+        self.on_finished()
 
     def cancel(self):
         self.status = self.JOB_CANCELLED
         self.stop_time = time.time()
         self.timer.cancel()
+        self.timer = None
+
         self.on_stop()
 
 
@@ -219,8 +249,10 @@ class SprinklerJobQueue(object):
                     'needs to be greater than 0'.format(duration))
 
         job_id = self._get_next_job_id()
-        job = SprinklerJob(job_id, sprinkler_id, duration, high_priority)
+        job = SprinklerJob(self._clock, job_id, sprinkler_id, duration,
+                high_priority)
         job.on_stop = lambda: self._turn_off(job)
+        job.on_finished = lambda: self._on_end_of_duration(job)
         self._waiting_jobs.push(job)
         self._attempt_next_job()
         return job_id
@@ -250,8 +282,7 @@ class SprinklerJobQueue(object):
                 self._attempt_next_job()
                 continue
 
-            job.start(self._clock,
-                    on_finished=lambda: self._on_end_of_duration(job))
+            job.start()
             self._active_jobs.push(job)
 
     def remove_active_job(self, job_id):
