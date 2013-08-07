@@ -45,14 +45,11 @@
 
   <div class="container">
     <div class="">
-
       <div class="alert alert-info">
-
-
         <table>
 
           <tr>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(1)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success disabled">
                 Platz 1
                 <br />
@@ -65,7 +62,7 @@
                 <br />&nbsp;
               </div>
             </td>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(2)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success">
                 Platz 2
                 <br />
@@ -78,7 +75,7 @@
                 <br />&nbsp;
               </div>
             </td>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(3)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
                 <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
@@ -101,7 +98,7 @@
           </tr>
 
           <tr>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(4)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large">
                 <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
@@ -117,7 +114,7 @@
                 <br />&nbsp;
               </div>
             </td>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(5)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
                 <div style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
@@ -133,7 +130,7 @@
                 <br />&nbsp;
               </div>
             </td>
-            <td class="span4">
+            <td class="span4" onClick="javascript:wassern(6)">
               <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success">
                 Platz 6
                 <br />
@@ -154,8 +151,38 @@
     </div>
   </div>
 
-  <script src="libs/angular/angular.min.js"></script>
+  <script src="libs/jquery/jquery-2.0.3.js"></script>
   <script src="libs/bootstrap/js/bootstrap.min.js"></script>
   <script src="app/jobs.js"></script>
+
+
+  <script type="text/javascript">
+  function wassern(id) {
+    //document.getElementById("argh").innerHTML = "Hello, world!" + id;
+    var new_job = {
+        sprinkler_id: 'court' + id,
+        duration: 60,
+        high_priority: false,
+    };
+    $.ajax({
+      url: '/jobs',
+      type: 'POST',
+      data: JSON.stringify(new_job),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        // alert('success' + msg);
+      },
+      error: function(msg) {
+        alert('error' + msg);
+      }
+    });
+  }
+
+
+
+  </script>
+
 </body>
 </html>
