@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app id="ng-app">
+<head>
+  <meta charset="utf-8" />
+  <title>PBA - Wurstfinger Mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+  -->
+
+  <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css" />
+  <style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  }
+  </style>
+  <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-responsive.css" />
+  <link rel="stylesheet" href="app/app.css" />
+
+  <!--[if lt IE 9]><script src="libs/html5shiv/html5shiv.min.js"></script><![endif]-->
+</head>
+
+<body>
+
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <li class="active"><a href="index.html">Original Mode</a></li>
+            <li class="active"><a href="wurst.html">Wurstfinger Mode</a></li>
+            <!-- <li><a href="#contact">Contact</a></li> -->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="">
+      <div class="alert alert-info">
+        <table>
+
+          <tr>
+            <td class="span4">
+              <div id="court1button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-success disabled">
+                Platz 1
+                <br />
+                Bewässerung gesperrt
+                <br />&nbsp;
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                ---
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court2button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-success">
+                Platz 2
+                <br />
+                Sprinkler inaktiv
+                <br />&nbsp;
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                1 Minute wässern
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court3button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
+                <div id="court3xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 3
+                <br />
+                Sprinkler aktiv für 1:58
+                <br />&nbsp;
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                1 Minute wässern
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;
+            </td>
+          </tr>
+
+          <tr>
+            <td class="span4">
+              <div id="court4button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court4xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 4
+                <br />
+                Sprinkler soll 2:00
+                <br />(#3 - Wartezeit: 1:58)
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                1 Minute wässern
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court5button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-info">
+                <div id="court5xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 5
+                <br />
+                Sprinkler aktiv für 2:43
+                <br />&nbsp;
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                1 Minute wässern
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court6button" style="display: block; width: 80%;" type="button" class="btn btn-large btn-success">
+                Platz 6
+                <br />
+                Sprinkler inaktiv
+                <br />&nbsp;
+                <br />&nbsp;
+                <!-- <div style="display: block; width: 80%;" type="button" class="btn btn-large btn-success"> -->
+                1 Minute wässern
+                <!-- </div> -->
+                <br />&nbsp;
+              </div>
+            </td>
+          </tr>
+
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="libs/jquery/jquery-2.0.3.js"></script>
+  <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+  <script src="app/jobs.js"></script>
+
+
+  <script type="text/javascript">
+
+  elem = document.getElementById("court1button");
+  elem.addEventListener("click", wassern_id1, false);
+  // elem = document.getElementById("court1xbutton");
+  // elem.addEventListener("click", abbrechen_id1, false);
+
+  elem = document.getElementById("court2button");
+  elem.addEventListener("click", wassern_id2, false);
+  // elem = document.getElementById("court2xbutton");
+  // elem.addEventListener("click", abbrechen_id2, false);
+
+  elem = document.getElementById("court3button");
+  elem.addEventListener("click", wassern_id3, false);
+  elem = document.getElementById("court3xbutton");
+  elem.addEventListener("click", abbrechen_id3, false);
+
+  elem = document.getElementById("court4button");
+  elem.addEventListener("click", wassern_id4, false);
+  elem = document.getElementById("court4xbutton");
+  elem.addEventListener("click", abbrechen_id4, false);
+
+  elem = document.getElementById("court5button");
+  elem.addEventListener("click", wassern_id5, false);
+  elem = document.getElementById("court5xbutton");
+  elem.addEventListener("click", abbrechen_id5, false);
+
+  elem = document.getElementById("court6button");
+  elem.addEventListener("click", wassern_id6, false);
+  // elem = document.getElementById("court6xbutton");
+  // elem.addEventListener("click", abbrechen_id6, false);
+
+  function wassern_id1(event) {
+    wassern(1, event)
+  }
+  function wassern_id2(event) {
+    wassern(2, event)
+  }
+  function wassern_id3(event) {
+    wassern(3, event)
+  }
+  function wassern_id4(event) {
+    wassern(4, event)
+  }
+  function wassern_id5(event) {
+    wassern(5, event)
+  }
+  function wassern_id6(event) {
+    wassern(6, event)
+  }
+
+  function abbrechen_id1(event) {
+    abbrechen(1, event)
+  }
+  function abbrechen_id2(event) {
+    abbrechen(2, event)
+  }
+  function abbrechen_id3(event) {
+    abbrechen(3, event)
+  }
+  function abbrechen_id4(event) {
+    abbrechen(4, event)
+  }
+  function abbrechen_id5(event) {
+    abbrechen(5, event)
+  }
+  function abbrechen_id6(event) {
+    abbrechen(6, event)
+  }
+
+  function wassern(id, event) {
+    //alert('wassern ' + id); exit;
+    var new_job = {
+        sprinkler_id: 'court' + id,
+        duration: 60,
+        high_priority: false,
+    };
+    $.ajax({
+      url: '/jobs',
+      type: 'POST',
+      data: JSON.stringify(new_job),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        // alert('success' + msg);
+      },
+      error: function(msg) {
+        alert('error' + msg);
+      }
+    });
+  }
+
+  function abbrechen(id, event) {
+    alert('abbrechen ' + id);
+    event.stopPropagation();
+  }
+
+  </script>
+
+</body>
+</html>
