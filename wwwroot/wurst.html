@@ -287,7 +287,7 @@
           document.getElementById("court" + id + "status").innerHTML = "Bewässerung inaktiv";
         } else if (msg.status == "active") {
           $("#" + "court" + id + "button").removeClass("btn-success").addClass("btn-info");
-          document.getElementById("court" + id + "status").innerHTML = "Sprinkler aktiv für " + Math.round(msg.remaining_time);
+          document.getElementById("court" + id + "status").innerHTML = "aktiv für " + Math.round(msg.remaining_time);
         } else if (msg.status == "waiting") {
           $("#" + "court" + id + "button").removeClass("btn-success").removeClass("btn-info");
           document.getElementById("court" + id + "status").innerHTML = "Sprinkler soll " + Math.round(msg.duration);
