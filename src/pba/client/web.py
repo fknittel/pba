@@ -38,9 +38,16 @@ class JobsResource(resource.Resource):
         return WaitingJobResource(job_queue=self._job_queue, job_id=job_id)
 
 
-class CourtsResource(resource.Resource):
-    isLeaf = True
+def court_status_from_jobs(sprinkler_id, jobs):
+    for job in jobs:
+        if job.sprinkler_id == sprinkler_id:
+            return job.for_json()
+    return {'sprinkler_id': sprinkler_id,
+            'status': 'inactive',
+            }
 
+
+class CourtsResource(resource.Resource):
     def __init__(self, sprinkler_ctrl, job_queue):
         resource.Resource.__init__(self)
         self._sprinkler_ctrl = sprinkler_ctrl
@@ -50,16 +57,23 @@ class CourtsResource(resource.Resource):
         jobs = self._job_queue.list_jobs()
         courts = []
         for sprinkler_id in sorted(self._sprinkler_ctrl.sprinkler_ids):
-            courts.append(self._filter_for(jobs, sprinkler_id))
+            courts.append(court_status_from_jobs(sprinkler_id, jobs))
         return json_response(request, courts)
 
-    def _filter_for(self, jobs, sprinkler_id):
-        for job in jobs:
-            if job.sprinkler_id == sprinkler_id:
-                return job.for_json()
-        return {'sprinkler_id': sprinkler_id,
-                'status': 'inactive',
-                }
+    def getChild(self, court_id, request): 
+        return CourtResource(court_id, self._job_queue)
+
+
+class CourtResource(resource.Resource):
+    def __init__(self, court_id, job_queue):
+        resource.Resource.__init__(self)
+        self._court_id = court_id
+        self._job_queue = job_queue
+
+    def render_GET(self, request):
+        jobs = self._job_queue.list_jobs()
+        return json_response(request, court_status_from_jobs(self._court_id,
+            jobs))
 
 
 class ActiveJobsResource(resource.Resource):
