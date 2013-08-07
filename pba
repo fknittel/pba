@@ -12,5 +12,6 @@ sys.path.insert(0, PYTHON_BASE_PATH)
 sys.argv.insert(1, b'pba')
 sys.argv.insert(1, b'-no')
 
+print("pba starting, open http://localhost:8080/ in your browser")
 from twisted.scripts.twistd import run
 run()
