@@ -1,4 +1,5 @@
 function JobsController($scope, $http) {
+    $scope.duration = '120';
     $scope.addJob = function(sprinkler_id) {
     	var new_job = {
         	sprinkler_id: sprinkler_id,
@@ -11,7 +12,6 @@ function JobsController($scope, $http) {
 	  	    }).
 		    error(function(data, status, headers, config) {
 		    });
-        $scope.duration = '';
     };
 }
 
