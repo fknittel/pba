@@ -284,12 +284,15 @@
       success: function(msg) {
         if (msg.status == "inactive") {
           $("#" + "court" + id + "button").removeClass("btn-info").addClass("btn-success");
+          $("#" + "court" + id + "xbutton").addClass("hidden");
           document.getElementById("court" + id + "status").innerHTML = "Bewässerung inaktiv";
         } else if (msg.status == "active") {
           $("#" + "court" + id + "button").removeClass("btn-success").addClass("btn-info");
+          $("#" + "court" + id + "xbutton").removeClass("hidden");
           document.getElementById("court" + id + "status").innerHTML = "aktiv für " + Math.round(msg.remaining_time);
         } else if (msg.status == "waiting") {
           $("#" + "court" + id + "button").removeClass("btn-success").removeClass("btn-info");
+          $("#" + "court" + id + "xbutton").removeClass("hidden");
           document.getElementById("court" + id + "status").innerHTML = "Sprinkler soll " + Math.round(msg.duration);
         } else {
           document.getElementById("court" + id + "status").innerHTML = "Statusanzeige kaputt: " + msg.status;
