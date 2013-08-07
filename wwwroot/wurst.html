@@ -270,6 +270,17 @@
     });
   }
 
+  window.onload = refresh_all;
+
+  window.setInterval(refresh_all, 1000);
+
+  function refresh_all() {
+
+    for (var i = 1; i <= 6; i++) {
+      refresh_status(i);
+    }
+  }
+
   </script>
 
 </body>
