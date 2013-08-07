@@ -2,7 +2,7 @@
 <html lang="en" data-ng-app id="ng-app">
   <head>
     <meta charset="utf-8" />
-    <title>PBA</title>
+    <title>PBA - Original Mode</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
     <meta name="description" content="" />
@@ -36,9 +36,9 @@
           <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Original Mode</a></li>
-              <!-- <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li> -->
+              <li class="active"><a href="index.html">Original Mode</a></li>
+              <li class="active"><a href="wurst.html">Wurstfinger Mode</a></li>
+              <!-- <li><a href="#contact">Contact</a></li> -->
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -49,6 +49,7 @@
 	    <h2>Active Jobs</h2>
 	    <div data-ng-controller="ActiveJobsController">
 	      <a href="" class="btn" data-ng-click="refresh()">refresh active list</a>
+        <a href="" class="btn" onClick="javascript:location.reload(false)">refresh both lists</a>
 	      <ul class="unstyled">
 	        <li data-ng-repeat="job in jobs">
 	          <span>{{job.job_id}}</span>
@@ -114,6 +115,7 @@
 	    <h2>Waiting Jobs</h2>
 	    <div data-ng-controller="WaitingJobsController">
 	      <a href="" class="btn" ng-click="refresh()">refresh waiting list</a>
+        <a href="" class="btn" onClick="javascript:location.reload(false)">refresh both lists</a>
 	      <ul class="unstyled">
 	        <li data-ng-repeat="job in jobs">
 	          <span>{{job.job_id}}</span>
