@@ -50,7 +50,7 @@
 
           <tr>
             <td class="span4">
-              <div id="court1button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+              <div id="court1button" style="display: block; width: 80%;" type="button" class="btn btn-large disabled">
                 <div id="court1xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
                 </div>
@@ -63,7 +63,7 @@
               </div>
             </td>
             <td class="span4">
-              <div id="court2button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+              <div id="court2button" style="display: block; width: 80%;" type="button" class="btn btn-large disabled">
                 <div id="court2xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
                   X
                 </div>
@@ -148,7 +148,7 @@
 
   <script type="text/javascript">
 
-  for (var id = 1; id <= 6; id++) {
+  for (var id = 3; id <= 6; id++) {
     (function(id){
       elem = document.getElementById("court" + id + "button");
       elem.addEventListener(
