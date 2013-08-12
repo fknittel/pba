@@ -21,6 +21,9 @@ class GpioOutPort(object):
         self._port_id = port_id
         self._state = False
 
+    def __str__(self):
+        return 'device {}'.format(self._port_path)
+
     @property
     def is_exported(self):
         return os.path.exists(self._port_path)

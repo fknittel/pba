@@ -1,6 +1,15 @@
 #!/usr/bin/python
+# vim:set ts=4 sw=4 et:
+from __future__ import (absolute_import, division, print_function,
+        unicode_literals)
+import sys
+import os.path
 
-from gpio import *
+PYTHON_BASE_PATH = os.path.join(
+        os.path.abspath(os.path.dirname(sys.argv[0])), b'src')
+sys.path.insert(0, PYTHON_BASE_PATH)
+
+from pba.core.gpio import *
 
 ctrl = GpioController()
 
@@ -18,4 +27,8 @@ p_court6 = ctrl.get_outgoing_port(GPIO2_BASE + 22)
 p_courts = [p_court1, p_court2, p_court3, p_court4, p_court5, p_court6]
 
 for p_court in p_courts:
-    p_court.export()
+    if not p_court.is_exported:
+        print("exporting {}".format(p_court))
+        p_court.export()
+    else:
+        print("skipping {}".format(p_court))
