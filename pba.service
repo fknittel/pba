@@ -5,7 +5,7 @@ After=pba-setup.service
 
 [Service]
 WorkingDirectory=/home/root/pba/
-ExecStart=./pba -c gpio-example.conf
+ExecStart=/home/root/pba/pba -c /etc/pba.conf
 Restart=always
 
 [Install]
