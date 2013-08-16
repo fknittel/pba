@@ -63,6 +63,10 @@ class CourtsResource(resource.Resource):
         self._sprinkler_ctrl = sprinkler_ctrl
         self._job_queue = job_queue
 
+        for sprinkler_id in self._sprinkler_ctrl.sprinkler_ids:
+            self.putChild(sprinkler_id, CourtResource(sprinkler_id,
+                    self._job_queue))
+
     def render_GET(self, request):
         jobs = self._job_queue.list_jobs()
         courts = []
@@ -70,30 +74,31 @@ class CourtsResource(resource.Resource):
             courts.append(court_status_from_jobs(sprinkler_id, jobs))
         return json_response(request, courts)
 
-    def getChild(self, court_id, request): 
-        return CourtResource(court_id, self._job_queue)
-
 
 class CourtResource(resource.Resource):
     def __init__(self, court_id, job_queue):
         resource.Resource.__init__(self)
         self._job_queue = job_queue
         self._court_id = court_id
-        self._job = find_job_for_court(self._court_id,
+
+    def _get_job(self):
+        return find_job_for_court(self._court_id,
                 self._job_queue.list_jobs())
 
     def render_GET(self, request):
-        if self._job is None:
+        job = self._get_job()
+        if job is None:
             return json_response(request,
                     create_inactive_court_for_json(self._court_id))
-        return json_response(request, self._job.for_json())
+        return json_response(request, job.for_json())
 
     def render_POST(self, request):
+        job = self._get_job()
         new_job = json.loads(request.content.getvalue())
         duration = new_job['duration']
-        if self._job is not None:
-            self._job.duration = duration
-            return json_response(request, self._job.for_json())
+        if job is not None:
+            job.duration = duration
+            return json_response(request, job.for_json())
 
         job = self._job_queue.add(self._court_id,
                 duration, new_job['high_priority'])
