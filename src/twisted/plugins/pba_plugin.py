@@ -1,16 +1,17 @@
 # vim:set ts=4 sw=4 et:
 from __future__ import (absolute_import, division, print_function,
         unicode_literals)
+from ConfigParser import SafeConfigParser
+import logging.config
 from zope.interface import implements
 from twisted.python import usage
 from twisted.plugin import IPlugin
-from twisted.application.service import IServiceMaker
-from pba.client.web import create_site
-from ConfigParser import SafeConfigParser
-import logging.config
+from twisted.application.service import (IServiceMaker, Service)
 from twisted.python.log import PythonLoggingObserver
-from pba.core.logging import LogObserverInjectingMultiService
 from twisted.application.internet import TCPServer  # @UnresolvedImport
+from pba.core.logging import LogObserverInjectingMultiService
+from pba.core import daemon
+from pba.client.web import create_site
 
 
 class IrrigationControllerServiceOptions(usage.Options):
@@ -19,6 +20,14 @@ class IrrigationControllerServiceOptions(usage.Options):
             ["config-file", "c", "irrigationcontroller.conf",
                     "The configuration file."],
         ]
+
+
+class StopSprinklersService(Service):
+    def __init__(self, job_queue):
+        self._job_queue = job_queue
+
+    def stopService(self):
+        self._job_queue.remove_all_jobs()
 
 
 class IrrigationControllerServiceMaker(object):
@@ -34,12 +43,16 @@ class IrrigationControllerServiceMaker(object):
         logging.config.fileConfig(config_file_name)
         config = SafeConfigParser()
         config.read(config_file_name)
-        site = create_site(config)
+        job_queue, sprinkler_ctrl = daemon.main(config)
+        site = create_site(job_queue, sprinkler_ctrl)
 
         multi_service = LogObserverInjectingMultiService(
                 observer=PythonLoggingObserver().emit)
         http_service = TCPServer(http_port_nr, site)
         multi_service.addService(http_service)
+
+        stop_sprinklers = StopSprinklersService(job_queue)
+        multi_service.addService(stop_sprinklers)
 
         return multi_service
 

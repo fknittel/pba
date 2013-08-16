@@ -175,9 +175,7 @@ class WaitingJobResource(resource.Resource):
         return json_response(request, job.for_json())
 
 
-def create_site(config):
-    job_queue, sprinkler_ctrl = daemon.main(config)
-
+def create_site(job_queue, sprinkler_ctrl):
     root = static.File('wwwroot')
     root.putChild('jobs', JobsResource(job_queue))
     root.putChild('courts', CourtsResource(sprinkler_ctrl, job_queue))
