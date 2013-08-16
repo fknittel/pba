@@ -83,12 +83,12 @@ class SprinklerJob(object):
     def _set_duration(self, duration):
         self._duration = duration
         if self.timer is not None:
+            self.timer.cancel()
             remaining_time = self.remaining_time
             if remaining_time > 0:
-                self.timer.cancel()
                 self._start_timer_with_duration(self.remaining_time)
             else:
-                self.cancel()
+                self._on_finished()
 
     duration = property(_get_duration, _set_duration)
 
