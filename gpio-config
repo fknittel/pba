@@ -4,31 +4,27 @@ from __future__ import (absolute_import, division, print_function,
         unicode_literals)
 import sys
 import os.path
+from ConfigParser import SafeConfigParser
 
 PYTHON_BASE_PATH = os.path.join(
         os.path.abspath(os.path.dirname(sys.argv[0])), b'src')
 sys.path.insert(0, PYTHON_BASE_PATH)
 
 from pba.core.gpio import *
+from pba.core.sprinkler_config import load_sprinklers
 
-ctrl = GpioController()
-
-GPIO0_BASE = 0 * 32
-GPIO1_BASE = 1 * 32
-GPIO2_BASE = 2 * 32
-GPIO3_BASE = 2 * 32
-
-p_court1 = ctrl.get_outgoing_port(GPIO2_BASE + 25)
-p_court2 = ctrl.get_outgoing_port(GPIO2_BASE + 24)
-p_court3 = ctrl.get_outgoing_port(GPIO2_BASE + 1)
-p_court4 = ctrl.get_outgoing_port(GPIO0_BASE + 27)
-p_court5 = ctrl.get_outgoing_port(GPIO2_BASE + 23)
-p_court6 = ctrl.get_outgoing_port(GPIO2_BASE + 22)
-p_courts = [p_court1, p_court2, p_court3, p_court4, p_court5, p_court6]
-
-for p_court in p_courts:
-    if not p_court.is_exported:
-        print("exporting {}".format(p_court))
-        p_court.export()
+def setup_sprinkler(sprinkler_name, sprinkler):
+    if not sprinkler.is_setup:
+        print("setting up {}".format(sprinkler))
+        sprinkler.setup()
     else:
-        print("skipping {}".format(p_court))
+        print("skipping set-up of {}".format(sprinkler))
+
+def main(config):
+    gpio_ctrl = GpioController()
+    load_sprinklers(config, gpio_ctrl, setup_sprinkler)
+
+if __name__ == '__main__':
+    config = SafeConfigParser()
+    config.read(sys.argv[1])
+    main(config)

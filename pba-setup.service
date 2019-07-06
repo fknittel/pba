@@ -5,4 +5,4 @@ After=remount-rootfs.service
 
 [Service]
 RemainAfterExit=yes
-ExecStart=/home/root/pba/gpio-config
+ExecStart=/home/root/pba/gpio-config /etc/pba.conf

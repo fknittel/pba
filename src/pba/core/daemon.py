@@ -35,7 +35,8 @@ def main(config):
     sprinkler_job_queue = SprinklerJobQueue(reactor, sprinkler_ctrl,
             queue_policy)
 
-    load_sprinklers(config, gpio_ctrl, sprinkler_ctrl)
+    load_sprinklers(config, gpio_ctrl,
+            lambda sprinkler_name, sprinkler: sprinkler_ctrl.add_sprinkler(sprinkler_name, sprinkler))
     load_sprinkler_interceptors(sprinkler_ctrl)
 
     return sprinkler_job_queue, sprinkler_ctrl
