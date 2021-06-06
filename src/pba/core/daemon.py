@@ -31,7 +31,7 @@ def load_sprinkler_interceptors(sprinkler_ctrl):
 def main(config):
     gpio_ctrl = gpio.GpioController()
     sprinkler_ctrl = SprinklerController()
-    queue_policy = MaxActiveSprinklerJobPolicy(max_total=2, max_low_priority=1)
+    queue_policy = MaxActiveSprinklerJobPolicy(max_total=1, max_low_priority=1)
     sprinkler_job_queue = SprinklerJobQueue(reactor, sprinkler_ctrl,
             queue_policy)
 
