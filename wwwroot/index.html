@@ -1,139 +1,285 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app id="ng-app">
-  <head>
-    <meta charset="utf-8" />
-    <title>PBA - Original Mode</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    -->
+<head>
+  <meta charset="utf-8" />
+  <title>Platzberegnungsanlage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css" />
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-responsive.css" />
-    <link rel="stylesheet" href="app/app.css" />
+  <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css" />
+  <style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  }
+  </style>
+  <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-responsive.css" />
+  <link rel="stylesheet" href="app/app.css" />
+</head>
 
-    <!--[if lt IE 9]>
-      <script src="libs/html5shiv/html5shiv.min.js"></script>
-    <![endif]-->
-  </head>
+<body>
 
-  <body>
-
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="index.html">Original Mode</a></li>
-              <li class="active"><a href="wurst.html">Wurstfinger Mode</a></li>
-              <!-- <li><a href="#contact">Contact</a></li> -->
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-	    <h2>Active Jobs</h2>
-	    <div data-ng-controller="ActiveJobsController">
-	      <a href="" class="btn" data-ng-click="refresh()">refresh active list</a>
-        <a href="" class="btn" onClick="javascript:location.reload(false)">refresh both lists</a>
-	      <ul class="unstyled">
-	        <li data-ng-repeat="job in jobs">
-	          <span>{{job.job_id}}</span>
-	          <span>{{job.sprinkler_id}}</span>
-	          <span>{{job.duration}}</span>
-	          <span>{{job.start_time}}</span>
-	          <span>{{job.high_priority}}</span>
-              <form data-ng-submit="removeJob(job.job_id)">
-                <input class="btn btn-large" type="submit"
-                    value="Remove" />
-              </form>
-	        </li>
-	      </ul>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court1')">
-            Court 1
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court2')">
-            Court 2
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court3')">
-            Court 3
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court4')">
-            Court 4
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court5')">
-            Court 5
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <div data-ng-controller="JobsController">
-          <form data-ng-submit="addJob('court6')">
-            Court 6
-	        <input type="text" data-ng-model="duration" size="30"
-	               placeholder="duration of sprinkling">
-	        <input class="btn btn-primary btn-large" type="submit" value="add" />
-	      </form>
-	    </div>
-	    <h2>Waiting Jobs</h2>
-	    <div data-ng-controller="WaitingJobsController">
-	      <a href="" class="btn" ng-click="refresh()">refresh waiting list</a>
-        <a href="" class="btn" onClick="javascript:location.reload(false)">refresh both lists</a>
-	      <ul class="unstyled">
-	        <li data-ng-repeat="job in jobs">
-	          <span>{{job.job_id}}</span>
-	          <span>{{job.sprinkler_id}}</span>
-	          <span>{{job.duration}}</span>
-	          <span>{{job.start_time}}</span>
-	          <span>{{job.high_priority}}</span>
-              <form data-ng-submit="removeJob(job.job_id)">
-                <input class="btn btn-large" type="submit"
-                    value="Remove" />
-              </form>
-	        </li>
-	      </ul>
-	    </div>
-    </div> <!-- /container -->
+  <div class="container">
+    <div class="">
+      <div class="alert alert-info">
+        <table>
 
-    <script src="libs/angular/angular.min.js"></script>
-    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
-    <script src="app/jobs.js"></script>
-  </body>
+          <tr>
+            <td class="span4">
+              <div id="court1button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court1xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 1
+                <br />&nbsp;
+                <div id="court1status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court2button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court2xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 2
+                <br />&nbsp;
+                <div id="court2status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court3button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court3xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 3
+                <br />&nbsp;
+                <div id="court3status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;
+            </td>
+          </tr>
+
+          <tr>
+            <td class="span4">
+              <div id="court4button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court4xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 4
+                <br />&nbsp;
+                <div id="court4status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court5button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court5xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 5
+                <br />&nbsp;
+                <div id="court5status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+            <td class="span4">
+              <div id="court6button" style="display: block; width: 80%;" type="button" class="btn btn-large">
+                <div id="court6xbutton" style="width: 5%;" type="button" class="pull-right btn btn-large btn-warning">
+                  X
+                </div>
+                Platz 6
+                <br />&nbsp;
+                <div id="court6status">STATUS_TEXT</div>
+                <br />&nbsp;
+                1 Minute wässern
+                <br />&nbsp;
+              </div>
+            </td>
+          </tr>
+
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="libs/jquery/jquery-2.0.3.js"></script>
+  <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+  <script src="app/jobs.js"></script>
+
+  <script type="text/javascript">
+
+  for (var id = 1; id <= 6; id++) {
+    (function(id){
+      elem = document.getElementById("court" + id + "button");
+      elem.addEventListener(
+        "click",
+        function(event){wassern(id, event);},
+        false
+      );
+      elem = document.getElementById("court" + id + "xbutton");
+      elem.addEventListener(
+        "click",
+        function(event){abbrechen(id, event);},
+        false
+      );
+    })(id)
+  }
+
+  function wassern(id, event) {
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        var jobid = msg.job_id;
+        if (jobid == null) {
+          wassern2(id, 60);
+          return;
+        } else {
+          wassern2(id, 60 + msg.duration);
+          return;
+        }
+      },
+      error: function(msg) {
+        alert('error wassern' + msg);
+      }
+    });
+  }
+
+  function wassern2(id, gesamtzeit) {
+    var new_job = {
+        duration: gesamtzeit,
+        high_priority: true,
+    };
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'POST',
+      data: JSON.stringify(new_job),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        refresh_status(id);
+      },
+      error: function(msg) {
+        alert('error wassern2' + msg);
+      }
+    });
+  }
+
+  function abbrechen(id, event) {
+    event.stopPropagation();
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        var jobid = msg.job_id;
+        if (jobid == null) {
+          alert("hier kann nichts abgebrochen werden");
+          return;
+        }
+        abbrechen2(jobid)
+      },
+      error: function(msg) {
+        alert('error abbrechen' + msg);
+      }
+    });
+  }
+
+  function abbrechen2(jobid) {
+    $.ajax({
+      url: '/jobs/' + jobid,
+      type: 'DELETE',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+         refresh_all();
+      },
+      error: function(msg) {
+        alert('error abbrechen2' + msg);
+      }
+    });
+  }
+
+  function refresh_status(id) {
+    $.ajax({
+      url: '/courts/court' + id,
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      async: true,
+      success: function(msg) {
+        if (msg.status == "inactive") {
+          $("#" + "court" + id + "button").removeClass("btn-danger").removeClass("btn-info").addClass("btn-success");
+          $("#" + "court" + id + "xbutton").addClass("hidden");
+          document.getElementById("court" + id + "status").innerHTML = "Bewässerung inaktiv";
+        } else if (msg.status == "active") {
+          $("#" + "court" + id + "button").removeClass("btn-danger").removeClass("btn-success").addClass("btn-info");
+          $("#" + "court" + id + "xbutton").removeClass("hidden");
+          document.getElementById("court" + id + "status").innerHTML = "aktiv für " + Math.round(msg.remaining_time);
+        } else if (msg.status == "waiting") {
+          $("#" + "court" + id + "button").removeClass("btn-danger").removeClass("btn-success").removeClass("btn-info");
+          $("#" + "court" + id + "xbutton").removeClass("hidden");
+          document.getElementById("court" + id + "status").innerHTML = "Sprinkler soll " + Math.round(msg.duration);
+        } else {
+          document.getElementById("court" + id + "status").innerHTML = "Statusanzeige kaputt: " + msg.status;
+        }
+      },
+      error: function(msg) {
+        $("#" + "court" + id + "button").removeClass("btn-info").removeClass("btn-success").addClass("btn-danger");
+        $("#" + "court" + id + "xbutton").addClass("hidden");
+        document.getElementById("court" + id + "status").innerHTML = "Statusanzeige kaputt!";
+        //alert('error refresh status ' + id + " " + msg);
+      }
+    });
+  }
+
+  window.onload = refresh_all;
+  window.setInterval(refresh_all, 1000);
+
+  function refresh_all() {
+    try {
+      for (var i = 1; i <= 6; i++) {
+        refresh_status(i);
+      }
+    } catch (e) {
+      console.log("Refresh failed: " + e);
+    }
+  }
+
+  </script>
+</body>
 </html>
