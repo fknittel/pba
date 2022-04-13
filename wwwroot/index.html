@@ -19,12 +19,8 @@
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
         <a class="brand" href="#">PBA (Platzberegungsanlage)</a>
+        <button type="button" class="btn" id="fullscreen-button">Vollbild</button>
       </div>
     </div>
   </div>
@@ -149,6 +145,18 @@
       );
     })(id)
   }
+
+  const fullscreenBtn = document.getElementById('fullscreen-button');
+  fullscreenBtn.addEventListener('click', function(event) {
+    document.documentElement.requestFullscreen();
+  });
+  document.addEventListener('fullscreenchange', function(event) {
+    if (document.fullscreenElement) {
+      fullscreenBtn.classList.add('hidden');
+    } else {
+      fullscreenBtn.classList.remove('hidden');
+    }
+  });
 
   function wassern(id, event) {
     $.ajax({
